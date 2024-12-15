@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sinhala Alphabet</title>
-  <meta name="description" content="Matching game to learn the Sinhala letters." />
+  <meta name="description" content="Learn Sinhala letters by matching with English transliterations. Practice vowels, consonants, or all letters." />
   <meta name="author" content="Carson Stacy" />
   <meta name="keywords" content="Sinhala, Alphabet, Learning Game, Language Learning" />
 
@@ -25,6 +25,7 @@
       --stats-bg: #f0f0f0;
       --badge-bg: #e0e0e0;
       --panel-bg: #ffffff;
+      --footer-bg: #fafafa;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -43,6 +44,7 @@
         --stats-bg: #1a1a1a;
         --badge-bg: #333333;
         --panel-bg: #1e1e1e;
+        --footer-bg: #1a1a1a;
       }
     }
 
@@ -53,6 +55,9 @@
       margin: 0;
       padding: 0;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* Top bar */
@@ -65,9 +70,28 @@
       background: var(--bg-color);
     }
 
-    .top-bar h1 {
+    .title-area {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .title-area h1 {
       font-size: 1.4em;
       margin: 0;
+    }
+
+    .subtitle {
+      font-size: 0.9em;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .set-buttons {
@@ -75,7 +99,8 @@
       gap: 5px;
     }
 
-    .set-buttons button {
+    .set-buttons button,
+    .answer-key-btn {
       background: var(--button-bg);
       color: var(--button-text);
       border: 1px solid var(--border-color);
@@ -86,8 +111,13 @@
       transition: background 0.3s;
     }
 
-    .set-buttons button:hover {
+    .set-buttons button:hover,
+    .answer-key-btn:hover {
       background: var(--selected-bg);
+    }
+
+    .answer-key-btn {
+      margin-left: 10px;
     }
 
     /* Stats bar */
@@ -117,6 +147,7 @@
     /* Main content */
     #game-area {
       padding: 20px;
+      flex: 1 0 auto;
     }
 
     #game {
@@ -268,16 +299,119 @@
     .panel button:hover {
       opacity: 0.9;
     }
+
+    /* Modal for answer key */
+    .modal-overlay {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius:5px;
+      max-width: 90%;
+      max-height: 80%;
+      overflow: auto;
+      border: 1px solid var(--border-color);
+    }
+
+    .modal h2 {
+      margin-top:0;
+      font-size:1.2em;
+    }
+
+    .modal .close-btn {
+      background:none;
+      border:none;
+      color: var(--text-color);
+      font-size:1.2em;
+      float:right;
+      cursor:pointer;
+    }
+
+    .answer-list {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 10px;
+    }
+
+    .answer-list .answer-item {
+      background:var(--item-bg);
+      border:1px solid var(--border-color);
+      border-radius:4px;
+      padding:5px 10px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      font-size:0.9em;
+      width:80px;
+    }
+
+    .answer-list .answer-item .si {
+      font-size:1.4em;
+      margin-bottom:5px;
+    }
+
+    .modal .wiki-link {
+      margin-top:10px;
+      font-size:0.9em;
+    }
+
+    .modal .wiki-link a {
+      color: var(--accent-color);
+      text-decoration:none;
+    }
+
+    .modal .wiki-link a:hover {
+      text-decoration:underline;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      color: var(--text-color);
+      padding:10px;
+      font-size:0.9em;
+      text-align:center;
+      border-top:1px solid var(--border-color);
+    }
+
+    footer a {
+      color: var(--accent-color);
+      text-decoration:none;
+    }
+
+    footer a:hover {
+      text-decoration:underline;
+    }
+
   </style>
 </head>
 <body>
 
   <div class="top-bar">
-    <h1>Sinhala Alphabet Matching</h1>
-    <div class="set-buttons">
-      <button id="vowelsBtn">Vowels</button>
-      <button id="consonantsBtn">Consonants</button>
-      <button id="allBtn">All</button>
+    <div class="title-area">
+      <h1>Sinhala Alphabet</h1>
+      <div class="subtitle">Match and learn</div>
+    </div>
+    <div class="actions">
+      <div class="set-buttons">
+        <button id="vowelsBtn">Vowels</button>
+        <button id="consonantsBtn">Consonants</button>
+        <button id="allBtn">All</button>
+      </div>
+      <button class="answer-key-btn" id="answerKeyBtn">Cheat Sheet</button>
     </div>
   </div>
 
@@ -337,6 +471,25 @@
     </label><br/>
     <button id="applySettingsBtn">Apply Settings</button>
   </div>
+
+  <!-- Modal Overlay for Answer Key -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="close-btn" id="closeModalBtn">&times;</button>
+      <h2>Cheat Sheet</h2>
+      <p>All Sinhala letters and their English transliterations:</p>
+      <div class="answer-list" id="answerList"></div>
+      <div class="wiki-link">
+        Learn more about Sinhala language: 
+        <a href="https://en.wikipedia.org/wiki/Sinhalese_language" target="_blank">Wikipedia</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Made by <a href="https://clstacy.github.io" target="_blank">Carson Stacy</a> • 
+    Source code available at: <a href="https://github.com/clstacy/sinhala" target="_blank">GitHub</a>
+  </footer>
 
   <script>
     const vowels = [
@@ -457,6 +610,27 @@
     hamburger.addEventListener('click', () => {
       panelOpen = !panelOpen;
       settingsPanel.classList.toggle('open', panelOpen);
+    });
+
+    // Modal for Answer Key
+    const answerKeyBtn = document.getElementById('answerKeyBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const answerList = document.getElementById('answerList');
+
+    answerKeyBtn.addEventListener('click', () => {
+      populateAnswerList();
+      modalOverlay.classList.add('active');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+
+    modalOverlay.addEventListener('click',(e)=>{
+      if(e.target === modalOverlay) {
+        modalOverlay.classList.remove('active');
+      }
     });
 
     document.addEventListener('click', (e) => {
@@ -697,6 +871,23 @@
       phaseUpThresholdInput.value = PHASE_UP_THRESHOLD;
       phaseAddCountInput.value = PHASE_ADD_COUNT;
       roundSizeInput.value = ROUND_SIZE;
+    }
+
+    function populateAnswerList() {
+      answerList.innerHTML = '';
+      const fullSet = vowels.concat(consonants);
+      fullSet.forEach(l => {
+        const div = document.createElement('div');
+        div.className = 'answer-item';
+        const si = document.createElement('div');
+        si.className = 'si';
+        si.textContent = l.si;
+        const en = document.createElement('div');
+        en.textContent = l.en;
+        div.appendChild(si);
+        div.appendChild(en);
+        answerList.appendChild(div);
+      });
     }
 
     window.addEventListener('load', () => {
