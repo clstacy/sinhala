@@ -4,22 +4,26 @@
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D30M9BZSM5"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-  
-    gtag('config', 'G-D30M9BZSM5');
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-D30M9BZSM5');
   </script>
-  <!-- End Google tag (gtag.js) -->
   
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sinhala Alphabet</title>
   <meta name="description" content="Learn Sinhala letters by matching with English transliterations. Practice vowels, consonants, or all letters." />
   <meta name="author" content="Carson Stacy" />
-  <meta name="keywords" content="Sinhala, Alphabet, Learning Game, Language Learning" />
+  <meta name="keywords" content="Sinhala, Alphabet, Learning Game, Language Learning, Matching" />
 
   <style>
+    /* Global Box-Sizing */
+    * {
+      box-sizing: border-box;
+    }
+
     /* Dark/Light theme using prefers-color-scheme */
     :root {
       --bg-color: #ffffff;
@@ -30,9 +34,9 @@
       --button-text: #000000;
       --item-bg: #f9f9f9;
       --item-text: #000000;
-      --selected-bg: #ddd;
-      --matched-bg: #a8e6a1;
-      --no-match-bg: #f4a7a7;
+      --selected-bg: #cce5ff; /* Light Blue */
+      --matched-bg: #a8e6a1;  /* Light Green */
+      --no-match-bg: #f4a7a7; /* Light Red */
       --stats-bg: #f0f0f0;
       --badge-bg: #e0e0e0;
       --panel-bg: #ffffff;
@@ -49,9 +53,9 @@
         --button-text: #ffffff;
         --item-bg: #1e1e1e;
         --item-text: #ffffff;
-        --selected-bg: #2d2d2d;
-        --matched-bg: #2f7a2f;
-        --no-match-bg: #7a2f2f;
+        --selected-bg: #375a7f; /* Darker Blue */
+        --matched-bg: #2f7a2f;  /* Darker Green */
+        --no-match-bg: #7a2f2f; /* Darker Red */
         --stats-bg: #1a1a1a;
         --badge-bg: #333333;
         --panel-bg: #1e1e1e;
@@ -79,6 +83,7 @@
       padding: 10px 20px;
       border-bottom: 1px solid var(--border-color);
       background: var(--bg-color);
+      flex-wrap: wrap;
     }
 
     .title-area {
@@ -92,22 +97,19 @@
       font-size: 1.4em;
       margin: 0;
     }
-    /*
-    .subtitle {
-      font-size: 0.9em;
-      color: var(--text-color);
-      opacity: 0.8;
-    }
-    */
+
     .actions {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .set-buttons {
       display: flex;
-      gap: 5px;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .set-buttons button,
@@ -116,19 +118,43 @@
       color: var(--button-text);
       border: 1px solid var(--border-color);
       border-radius: 4px;
-      font-size: 0.9em;
-      padding: 5px 10px;
+      font-size: 1em;
+      padding: 10px 20px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
     }
 
     .set-buttons button:hover,
     .answer-key-btn:hover {
       background: var(--selected-bg);
+      transform: scale(1.05);
     }
 
-    .answer-key-btn {
-      margin-left: 10px;
+    /* Cheat Sheet Button Container */
+    .answer-key-container {
+      margin: 10px 0;
+    }
+
+    .answer-key-container .answer-key-btn {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1em;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+
+    .answer-key-container .answer-key-btn:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
     }
 
     /* Stats bar */
@@ -140,19 +166,21 @@
       padding: 10px 0;
       background: var(--stats-bg);
       border-bottom: 1px solid var(--border-color);
+      position: relative;
     }
 
     .badge {
       background: var(--badge-bg);
       border-radius: 4px;
-      padding: 5px 10px;
-      font-size: 0.9em;
+      padding: 10px 15px;
+      font-size: 1em;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      min-width: 120px;
+      min-width: 150px;
       text-align: center;
+      transition: background 0.3s;
     }
 
     .badge span.value {
@@ -164,28 +192,35 @@
       padding: 20px;
       flex: 1 0 auto;
       position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
     }
 
     #game {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      gap: 40px;
-      margin-top: 30px;
-      flex-wrap: wrap;
+      gap: 20px;
+      flex-wrap: nowrap;
+      width: 100%;
+      /* Removed max-width to allow full width on small screens */
     }
 
     .column {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      align-items: flex-start;
+      gap: 15px;
+      align-items: center;
+      flex: 1 1 50%; /* Changed from 45% to 50% for equal spacing */
+      min-width: 0; /* Ensures columns can shrink properly */
     }
 
     .item {
       background: var(--item-bg);
       border: 2px solid var(--border-color);
-      width: 120px;
+      width: 100%; /* Ensures items fill the column's width */
       height: 60px;
       display: flex;
       align-items: center;
@@ -196,8 +231,12 @@
       position: relative;
       color: var(--item-text);
       opacity: 1;
-      transition: background 0.3s, color 0.3s, border 0.3s;
-      border-radius: 5px;
+      transition: background 0.3s, color 0.3s, border 0.3s, transform 0.2s;
+      border-radius: 8px;
+      font-size: 1.2em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .enItem {
@@ -210,14 +249,41 @@
 
     .selected {
       background: var(--selected-bg);
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
     .matched {
       background: var(--matched-bg) !important;
+      border-color: transparent;
+      color: var(--text-color);
+      animation: fadeIn 0.5s forwards;
     }
 
     .no-match {
       background: var(--no-match-bg) !important;
+      border-color: transparent;
+      color: var(--text-color);
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .hidden {
@@ -286,8 +352,8 @@
 
     .panel label {
       display: block;
-      margin: 5px 0;
-      font-size: 0.9em;
+      margin: 10px 0;
+      font-size: 1em;
     }
 
     .panel input {
@@ -298,25 +364,26 @@
       width: 60px;
       text-align: center;
       border-radius: 3px;
-      padding: 3px;
+      padding: 5px;
     }
 
     .panel button {
-      margin-top: 10px;
+      margin-top: 15px;
       background: var(--accent-color);
       color: #fff;
       border: none;
       border-radius: 4px;
-      font-size: 0.9em;
-      padding: 8px 12px;
+      font-size: 1em;
+      padding: 10px 15px;
       cursor: pointer;
+      transition: opacity 0.3s;
     }
 
     .panel button:hover {
       opacity: 0.9;
     }
 
-    /* Modal for answer key */
+    /* Modal for Cheat Sheet */
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
@@ -335,23 +402,27 @@
       background: var(--panel-bg);
       padding: 20px;
       border-radius:5px;
-      max-width: 90%;
+      width: 90%;
+      max-width: 600px;
       max-height: 80%;
-      overflow: auto;
+      overflow-y: auto;
       border: 1px solid var(--border-color);
+      position: relative;
     }
 
     .modal h2 {
       margin-top:0;
-      font-size:1.2em;
+      font-size:1.5em;
     }
 
     .modal .close-btn {
       background:none;
       border:none;
       color: var(--text-color);
-      font-size:1.2em;
-      float:right;
+      font-size:1.5em;
+      position: absolute;
+      top: 15px;
+      right: 15px;
       cursor:pointer;
     }
 
@@ -359,29 +430,39 @@
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      margin-top: 10px;
+      margin-top: 20px;
+      justify-content: center;
     }
 
     .answer-list .answer-item {
       background:var(--item-bg);
       border:1px solid var(--border-color);
       border-radius:4px;
-      padding:5px 10px;
+      padding:10px 15px;
       display:flex;
       flex-direction:column;
       align-items:center;
-      font-size:0.9em;
-      width:80px;
+      font-size:1em;
+      width:100px;
+      transition: background 0.3s, transform 0.2s;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .answer-list .answer-item:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
     }
 
     .answer-list .answer-item .si {
-      font-size:1.4em;
+      font-size:1.5em;
       margin-bottom:5px;
     }
 
     .modal .wiki-link {
-      margin-top:10px;
-      font-size:0.9em;
+      margin-top:20px;
+      font-size:1em;
     }
 
     .modal .wiki-link a {
@@ -393,46 +474,39 @@
       text-decoration:underline;
     }
 
-    /* Intro Message */
-    #introMessage {
-      display: none; /* Hidden by default */
-      padding: 40px 20px;
-      background: var(--accent-color);
-      color: white;
-      text-align: center;
-      font-size: 1.5em;
-      font-weight: bold;
-      border-radius: 10px;
-      margin: 20px auto;
-      max-width: 600px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      flex-direction: column;
-      gap: 20px;
+    .cheat-sheet-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .banner-btn {
+    .cheat-sheet-buttons button {
       background: var(--button-bg);
       color: var(--button-text);
       border: 1px solid var(--border-color);
       border-radius: 4px;
-      font-size: 1em;
-      padding: 10px 20px;
+      padding: 8px 15px;
       cursor: pointer;
-      transition: background 0.3s;
-      margin: 5px;
-      min-width: 120px;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 1em;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
     }
 
-    .banner-btn:hover {
+    .cheat-sheet-buttons button:hover {
       background: var(--selected-bg);
+      transform: scale(1.05);
     }
 
     /* Footer */
     footer {
       background: var(--footer-bg);
       color: var(--text-color);
-      padding:10px;
-      font-size:0.9em;
+      padding:15px;
+      font-size:1em;
       text-align:center;
       border-top:1px solid var(--border-color);
       flex-shrink: 0;
@@ -453,6 +527,97 @@
       margin-left: 5px;
     }
 
+    /* Intro Message */
+    #introMessage {
+      display: none; /* Hidden by default */
+      padding: 40px 20px;
+      background: var(--accent-color);
+      color: white;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .banner-btn {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1em;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin: 5px;
+      min-width: 120px;
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+
+    .banner-btn:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      #game {
+        gap: 15px;
+        max-width: 100%;
+      }
+
+      .column {
+        flex: 1 1 50%; /* Ensures equal width for columns */
+      }
+
+      .item {
+        max-width: 100%;
+        width: 100%;
+        height: 50px;
+        font-size: 1em;
+      }
+
+      .enItem {
+        font-size: 1.2em;
+      }
+
+      .siItem {
+        font-size: 1.5em;
+      }
+
+      .answer-key-container {
+        margin-top: 10px;
+      }
+
+      /* Ensure columns stay side by side */
+      #game {
+        flex-wrap: nowrap;
+      }
+    }
+
+    /* Removed the media query that stacks columns vertically on very small screens */
+    /* @media (max-width: 480px) {
+      #game {
+        gap: 10px;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .column {
+        flex: 1 1 100%;
+      }
+
+      .item {
+        max-width: 80%;
+      }
+    } */
+
   </style>
 </head>
 <body>
@@ -467,8 +632,11 @@
         <button id="consonantsBtn">Consonants</button>
         <button id="allBtn">All</button>
       </div>
-      <button class="answer-key-btn" id="answerKeyBtn">Cheat Sheet</button>
     </div>
+  </div>
+
+  <div class="answer-key-container">
+    <button class="answer-key-btn" id="answerKeyBtn">Cheat Sheet</button>
   </div>
 
   <div class="stats-bar">
@@ -483,7 +651,6 @@
     </div>
   </div>
   
-  <!-- Intro Message for First-Time Users -->
   <div id="introMessage">
     <div>Click on one to get started!</div>
     <div>
@@ -491,9 +658,10 @@
       <button id="consonantsBtnBanner" class="banner-btn">CONSONANTS</button>
       <button id="allBtnBanner" class="banner-btn">ALL</button>
     </div>
+    <button class="answer-key-btn" id="answerKeyBtnBanner">Cheat Sheet</button>
   </div>
   
-  <div id="game-area" style="display: none;"> <!-- Hidden initially -->
+  <div id="game-area" style="display: none;">
     <div id="game">
       <div class="column" id="leftCol"></div>
       <div class="column" id="rightCol"></div>
@@ -535,12 +703,19 @@
     <button id="applySettingsBtn">Apply Settings</button>
   </div>
 
-  <!-- Modal Overlay for Answer Key -->
+  <!-- Modal Overlay for Cheat Sheet -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="close-btn" id="closeModalBtn">&times;</button>
       <h2>Cheat Sheet</h2>
       <p>All Sinhala letters and their English transliterations:</p>
+      
+      <div class="cheat-sheet-buttons">
+        <button id="showVowelsBtn">Vowels</button>
+        <button id="showConsonantsBtn">Consonants</button>
+        <button id="showAllBtn">All</button>
+      </div>
+      
       <div class="answer-list" id="answerList"></div>
       <div class="wiki-link">
         Learn more about Sinhala language: 
@@ -551,8 +726,8 @@
 
   <footer>
     Made by <a href="https://clstacy.github.io" target="_blank">Carson Stacy</a> • 
-    Source code available at: <a href="https://github.com/clstacy/sinhala" target="_blank">GitHub</a> 
-    <span class="version-info" id="versionDisplay">Loading...</span>
+    Source code: <a href="https://github.com/clstacy/sinhala" target="_blank">GitHub</a> •
+    <span class="version-info" id="versionDisplay">v0.2.0</span>
   </footer>
 
   <script>
@@ -580,8 +755,8 @@
       {en:'ga', si:'ග'},
       {en:'gha', si:'ඝ'},
       {en:'ṅa', si:'ඞ'},
-      {en:'cha', si:'ච'},
-      {en:'chha', si:'ඡ'},
+      {en:'ca', si:'ච'},
+      {en:'cha', si:'ඡ'},
       {en:'ja', si:'ජ'},
       {en:'jha', si:'ඣ'},
       {en:'ña', si:'ඤ'},
@@ -604,8 +779,8 @@
       {en:'ra', si:'ර'},
       {en:'la', si:'ල'},
       {en:'va', si:'ව'},
-      {en:'śha', si:'ශ'},
-      {en:'ṣha', si:'ෂ'},
+      {en:'śa', si:'ශ'},
+      {en:'ṣa', si:'ෂ'},
       {en:'sa', si:'ස'},
       {en:'ha', si:'හ'},
       {en:'ḷa', si:'ළ'},
@@ -653,11 +828,16 @@
     const introMessage = document.getElementById('introMessage');
 
     const answerKeyBtn = document.getElementById('answerKeyBtn');
+    const answerKeyBtnBanner = document.getElementById('answerKeyBtnBanner');
     const modalOverlay = document.getElementById('modalOverlay');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const answerList = document.getElementById('answerList');
 
     const versionDisplay = document.getElementById('versionDisplay');
+
+    const showVowelsBtn = document.getElementById('showVowelsBtn');
+    const showConsonantsBtn = document.getElementById('showConsonantsBtn');
+    const showAllBtn = document.getElementById('showAllBtn');
 
     // Initialize totals
     vowelsTotal.textContent = vowels.length;
@@ -667,7 +847,7 @@
     vowelsBtn.addEventListener('click', () => { 
       currentSet = vowels; 
       switchSet(); 
-      hideIntroMessage(); // Hide intro message if visible
+      hideIntroMessage(); 
     });
 
     consonantsBtn.addEventListener('click', () => { 
@@ -701,6 +881,14 @@
       hideIntroMessage(); 
     });
 
+    // Event Listener for Cheat Sheet Buttons in Intro Message
+    if (answerKeyBtnBanner) {
+      answerKeyBtnBanner.addEventListener('click', () => {
+        populateAnswerList('all');
+        modalOverlay.classList.add('active');
+      });
+    }
+
     // Event Listener for Applying Settings
     applySettingsBtn.addEventListener('click', () => {
       if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
@@ -722,9 +910,9 @@
       settingsPanel.classList.toggle('open', panelOpen);
     });
 
-    // Modal for Letter Guide
+    // Modal for Cheat Sheet
     answerKeyBtn.addEventListener('click', () => {
-      populateAnswerList();
+      populateAnswerList('all');
       modalOverlay.classList.add('active');
     });
 
@@ -732,36 +920,34 @@
       modalOverlay.classList.remove('active');
     });
 
-    modalOverlay.addEventListener('click',(e)=>{
-      if(e.target === modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
         modalOverlay.classList.remove('active');
       }
     });
 
+    // Cheat Sheet Buttons Event Listeners
+    showVowelsBtn.addEventListener('click', () => { populateAnswerList('vowels'); });
+    showConsonantsBtn.addEventListener('click', () => { populateAnswerList('consonants'); });
+    showAllBtn.addEventListener('click', () => { populateAnswerList('all'); });
+
     // Intro Message Display for First-Time Users
     document.addEventListener('DOMContentLoaded', () => {
-      // Check if it's the first time the user opens the site
       const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
-
       if (isFirstTime) {
-        introMessage.style.display = 'flex'; // Show the intro message
-        document.getElementById('game-area').style.display = 'none'; // Hide game area
-        localStorage.setItem('sinhalaGameVisited', 'true'); // Mark as visited
+        introMessage.style.display = 'flex';
+        document.getElementById('game-area').style.display = 'none';
+        localStorage.setItem('sinhalaGameVisited', 'true');
       } else {
-        introMessage.style.display = 'none'; // Hide intro message
-        document.getElementById('game-area').style.display = 'block'; // Show game area
-        // Load progress if available
+        introMessage.style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
         if (!loadProgress()) {
-          // No saved progress yet, wait for user to choose set
+          // No saved progress yet
         } else {
           adjustActiveSetForCurrentSet();
           loadNewRound();
         }
       }
-
-      // Hide the intro message when a button is clicked is handled by event listeners above
-
-      // Initialize Version Display
       displayVersion();
     });
 
@@ -787,11 +973,8 @@
           const letter = selectedSi.dataset.match;
           onCorrectMatch(letter);
 
-          if (vowels.some(v => v.si === letter)) {
-            learnedVowels.add(letter);
-          } else if (consonants.some(c => c.si === letter)) {
-            learnedConsonants.add(letter);
-          }
+          if (vowels.some(v => v.si === letter)) learnedVowels.add(letter);
+          else if (consonants.some(c => c.si === letter)) learnedConsonants.add(letter);
           updateStats();
 
           selectedEn.classList.add('matched');
@@ -802,9 +985,7 @@
           selectedEn = null;
           selectedSi = null;
 
-          if (matchedPairs === ROUND_SIZE) {
-            loadNewRound();
-          }
+          if (matchedPairs === ROUND_SIZE) loadNewRound();
         } else {
           selectedEn.classList.add('no-match');
           selectedSi.classList.add('no-match');
@@ -814,7 +995,7 @@
             selectedSi.classList.remove('selected', 'no-match');
             selectedEn = null;
             selectedSi = null;
-          }, 200);
+          }, 500);
         }
         saveProgress();
       }
@@ -825,32 +1006,23 @@
       adjustActiveSetForCurrentSet();
       loadNewRound();
       saveProgress();
-      // Show the game area
-      document.getElementById('game-area').style.display = 'block';
-      // Hide intro message
+      document.getElementById('game-area').style.display = 'flex';
       hideIntroMessage();
     }
 
     // Function to Adjust Active Set Based on Current Set and Parameters
     function adjustActiveSetForCurrentSet() {
-      // Ensure guessCounts for all letters in currentSet
       currentSet.forEach(l => {
         if (guessCounts[l.si] == null) guessCounts[l.si] = 0;
       });
-
-      // Filter activeSet to only those in currentSet
       activeSet = activeSet.filter(l => currentSet.some(cl => cl.si === l.si));
-
-      // Rebuild allLetters from currentSet
       allLetters = [...currentSet];
 
-      // Build a pool of letters not in activeSet
       let usedSis = new Set(activeSet.map(l => l.si));
       let unused = currentSet.filter(l => !usedSis.has(l.si));
       remainingLetters = unused;
       shuffle(remainingLetters);
 
-      // If activeSet too small, add some from remainingLetters
       if (activeSet.length < initialActiveSize) {
         let needed = initialActiveSize - activeSet.length;
         let toAdd = remainingLetters.slice(0, needed);
@@ -861,27 +1033,33 @@
 
     // Function for Weighted Random Selection of Letters for a Round
     function getWeightedRandomSubset(letterArray, n) {
-      let weights = [];
-      let totalWeight = 0;
-      letterArray.forEach(l => {
-        const count = guessCounts[l.si] || 0;
-        const w = 1 / (1 + count);
-        weights.push({ letter: l, w });
-        totalWeight += w;
-      });
-
+      let availableLetters = [...letterArray];
       let chosen = [];
-      for (let i = 0; i < n; i++) {
-        const r = Math.random() * totalWeight;
+
+      for (let i = 0; i < n && availableLetters.length > 0; i++) {
+        let roundTotalWeight = 0;
+        availableLetters.forEach(l => {
+          roundTotalWeight += 1 / (1 + (guessCounts[l.si] || 0));
+        });
+
+        const r = Math.random() * roundTotalWeight;
         let cumulative = 0;
-        for (let { letter, w } of weights) {
-          cumulative += w;
+        let selectedIndex = -1;
+
+        for (let j = 0; j < availableLetters.length; j++) {
+          cumulative += 1 / (1 + (guessCounts[availableLetters[j].si] || 0));
           if (r <= cumulative) {
-            chosen.push(letter);
+            selectedIndex = j;
             break;
           }
         }
+
+        if (selectedIndex !== -1) {
+          const selectedLetter = availableLetters.splice(selectedIndex, 1)[0];
+          chosen.push(selectedLetter);
+        }
       }
+
       return chosen;
     }
 
@@ -891,7 +1069,8 @@
       selectedSi = null;
       matchedPairs = 0;
 
-      const chosen = getWeightedRandomSubset(activeSet, ROUND_SIZE);
+      const maxRoundSize = Math.min(ROUND_SIZE, activeSet.length);
+      const chosen = getWeightedRandomSubset(activeSet, maxRoundSize);
 
       const leftCol = document.getElementById('leftCol');
       const rightCol = document.getElementById('rightCol');
@@ -924,7 +1103,6 @@
     // Function to Handle Correct Matches
     function onCorrectMatch(siLetter) {
       guessCounts[siLetter] = (guessCounts[siLetter] || 0) + 1;
-
       let wellLearnedCount = activeSet.filter(l => guessCounts[l.si] >= WELL_LEARNED_THRESHOLD).length;
       if ((wellLearnedCount / activeSet.length) >= PHASE_UP_THRESHOLD) {
         if (remainingLetters.length > 0) {
@@ -939,12 +1117,9 @@
 
     // Function to Update Stats Display
     function updateStats() {
-      const progressCount = document.getElementById('progressCount'); // Get the combined progress element
       if (progressCount) {
-        progressCount.textContent = `${attempts}/${matches}`; // Update as "Attempts/Matches"
+        progressCount.textContent = `${matches}/${attempts}`;
       }
-
-      // Update vowels and consonants learned stats
       vowelsLearnedCount.textContent = learnedVowels.size;
       consonantsLearnedCount.textContent = learnedConsonants.size;
     }
@@ -1034,10 +1209,19 @@
     }
 
     // Function to Populate Answer List in Modal
-    function populateAnswerList() {
+    function populateAnswerList(filter = 'all') {
       answerList.innerHTML = '';
-      const fullSet = vowels.concat(consonants);
-      fullSet.forEach(l => {
+      let lettersToDisplay = [];
+
+      if (filter === 'vowels') {
+        lettersToDisplay = vowels;
+      } else if (filter === 'consonants') {
+        lettersToDisplay = consonants;
+      } else {
+        lettersToDisplay = vowels.concat(consonants);
+      }
+
+      lettersToDisplay.forEach(l => {
         const div = document.createElement('div');
         div.className = 'answer-item';
         const si = document.createElement('div');
@@ -1053,16 +1237,13 @@
 
     // Function to Display Current Version
     function displayVersion() {
-      // Manually set the version
-      /*
-      const version = "v0.2.0"; // Update this manually with each release
+      const version = "v0.2.0";
       if (versionDisplay) {
         versionDisplay.textContent = version;
       }
-      */
-
-      // Dynamically fetch from GitHub (uncomment if needed)
-      const githubRepo = "clstacy/sinhala";
+      // Optional: Dynamically fetch from GitHub (uncomment if needed)
+      
+      const githubRepo = "clstacy/sinhala"; // Corrected repository name
       fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
         .then(response => response.json())
         .then(data => {
@@ -1080,10 +1261,9 @@
     function hideIntroMessage() {
       if (introMessage) {
         introMessage.style.display = 'none';
-        document.getElementById('game-area').style.display = 'block';
+        document.getElementById('game-area').style.display = 'flex';
       }
     }
-
   </script>
 
 </body>
