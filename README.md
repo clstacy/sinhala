@@ -63,7 +63,7 @@ Have ideas for improvements or spot a bug? This project is totally open to contr
 
 ## License
 
-This project is licensed under the GNU v3.0 License. See the LICENSE file for details.
+This project is licensed under the GNL-3.0 License. See the LICENSE file for details.
 
 Thanks for checking this out! If you find it helpful or fun, feel free to share it with others who might be learning Sinhala. 😊
 
