@@ -48,6 +48,17 @@
       }
     }
 
+    #introMessage {
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    #introMessage span {
+      cursor: pointer;
+    }
+    
     body {
       font-family: sans-serif;
       background: var(--bg-color);
@@ -147,7 +158,7 @@
     .badge span.value {
       font-weight: bold;
     }
-
+    
     /* Main content */
     #game-area {
       padding: 20px;
@@ -407,7 +418,7 @@
   <div class="top-bar">
     <div class="title-area">
       <h1>Sinhala Alphabet</h1>
-      <div class="subtitle">Match and learn</div>
+      <div class="subtitle">Match and learn</div> 
     </div>
     <div class="actions">
       <div class="set-buttons">
@@ -430,7 +441,11 @@
       <span>Consonants:</span><span class="value" id="consonantsLearnedCount">0</span>/<span id="consonantsTotal"></span>
     </div>
   </div>
-
+  
+  <div id="introMessage" style="display: none; padding: 20px; background: var(--accent-color); color: white; text-align: center; font-size: 1.2em; font-weight: bold;">
+      CLICK ON <span style="text-decoration: underline;">VOWELS</span>, <span style="text-decoration: underline;">CONSONANTS</span>, OR <span style="text-decoration: underline;">ALL</span> TO GET STARTED!
+  </div>
+  
   <div id="game-area">
     <div id="game">
       <div class="column" id="leftCol"></div>
@@ -456,15 +471,15 @@
     </label>
     <label>
       Well Learned Threshold:
-      <input id="wellLearnedThresholdInput" type="number" min="1" value="4"/>
+      <input id="wellLearnedThresholdInput" type="number" min="1" value="5"/>
     </label>
     <label>
       Phase Up Threshold (0-1):
-      <input id="phaseUpThresholdInput" type="number" step="0.05" min="0" max="1" value="0.8"/>
+      <input id="phaseUpThresholdInput" type="number" step="0.05" min="0" max="1" value="0.75"/>
     </label>
     <label>
       Phase Add Count:
-      <input id="phaseAddCountInput" type="number" min="1" value="4"/>
+      <input id="phaseAddCountInput" type="number" min="1" value="5"/>
     </label>
     <label>
       Round Size:
@@ -552,9 +567,9 @@
     ];
 
     let initialActiveSize = 5;
-    let WELL_LEARNED_THRESHOLD = 4;
+    let WELL_LEARNED_THRESHOLD = 5;
     let PHASE_UP_THRESHOLD = 0.75;
-    let PHASE_ADD_COUNT = 4;
+    let PHASE_ADD_COUNT = 5;
     let ROUND_SIZE = 5;
 
     let currentSet = [];
@@ -592,10 +607,26 @@
     vowelsTotal.textContent = vowels.length;
     consonantsTotal.textContent = consonants.length;
 
-    vowelsBtn.addEventListener('click', () => { currentSet = vowels; switchSet(); });
-    consonantsBtn.addEventListener('click', () => { currentSet = consonants; switchSet(); });
-    allBtn.addEventListener('click', () => { currentSet = vowels.concat(consonants); switchSet(); });
+    document.addEventListener('DOMContentLoaded', () => {
+      const introMessage = document.getElementById('introMessage');
+    
+      // Check if it's the first time the user opens the site
+      const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
+    
+      if (isFirstTime) {
+        introMessage.style.display = 'block'; // Show the intro message
+        localStorage.setItem('sinhalaGameVisited', 'true'); // Mark as visited
+      }
+  
+      // Hide the intro message if clicked
+      introMessage.addEventListener('click', () => {
+        introMessage.style.display = 'none';
+      });
 
+      vowelsBtn.addEventListener('click', () => { currentSet = vowels; switchSet(); });
+      consonantsBtn.addEventListener('click', () => { currentSet = consonants; switchSet(); });
+      allBtn.addEventListener('click', () => { currentSet = vowels.concat(consonants); switchSet(); });
+    
     applySettingsBtn.addEventListener('click', () => {
       if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
       if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
@@ -606,7 +637,7 @@
       adjustActiveSetForCurrentSet();
       loadNewRound();
     });
-
+      
     // Hamburger toggle
     const hamburger = document.getElementById('hamburger');
     const settingsPanel = document.getElementById('settingsPanel');
@@ -690,7 +721,8 @@
         saveProgress();
       }
     });
-
+    });
+    
     function switchSet() {
       adjustActiveSetForCurrentSet();
       loadNewRound();
