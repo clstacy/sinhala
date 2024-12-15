@@ -37,10 +37,12 @@
       --selected-bg: #cce5ff; /* Light Blue */
       --matched-bg: #a8e6a1;  /* Light Green */
       --no-match-bg: #f4a7a7; /* Light Red */
-      --stats-bg: #f0f0f0;
-      --badge-bg: #e0e0e0;
+      --stats-bg: transparent; /* Changed to transparent */
+      --badge-bg: transparent; /* Changed to transparent */
       --panel-bg: #ffffff;
       --footer-bg: #fafafa;
+      --active-badge-bg: #d1e7dd; /* Light green for active badge */
+      --inactive-badge-bg: transparent;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -56,10 +58,12 @@
         --selected-bg: #375a7f; /* Darker Blue */
         --matched-bg: #2f7a2f;  /* Darker Green */
         --no-match-bg: #7a2f2f; /* Darker Red */
-        --stats-bg: #1a1a1a;
-        --badge-bg: #333333;
+        --stats-bg: transparent; /* Changed to transparent */
+        --badge-bg: transparent; /* Changed to transparent */
         --panel-bg: #1e1e1e;
         --footer-bg: #1a1a1a;
+        --active-badge-bg: #134e4a; /* Darker green for active badge */
+        --inactive-badge-bg: transparent;
       }
     }
 
@@ -93,6 +97,7 @@
       }
       .title-area {
         flex: 1;
+        text-align: left;
       }
       .stats-bar {
         flex: 2;
@@ -120,7 +125,7 @@
         padding: 5px 0;
       }
       .actions {
-        margin-top: 10px;
+        display: none; /* Hidden as set selection is moved to stats-bar */
       }
     }
 
@@ -143,7 +148,7 @@
       flex-wrap: wrap;
       padding: 5px 0; /* Reduced padding */
       background: var(--stats-bg);
-      border-bottom: 1px solid var(--border-color);
+      /* Removed border */
       position: relative;
     }
 
@@ -158,7 +163,19 @@
       gap: 5px;
       min-width: 100px; /* Reduced min-width */
       text-align: center;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer; /* Make badges clickable */
+      border: 1px solid transparent; /* Remove visible borders */
+    }
+
+    .badge.active {
+      background: var(--active-badge-bg);
+      border-color: var(--border-color); /* Optional: Add border when active */
+    }
+
+    .badge.inactive:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
     }
 
     @media (max-width: 768px) {
@@ -167,92 +184,9 @@
       }
     }
 
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+    .badge span.value {
+      font-weight: bold;
     }
-
-    .set-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .set-buttons button,
-    .answer-key-btn {
-      background: var(--button-bg);
-      color: var(--button-text);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1em;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      min-width: 100px;
-      max-width: 100%;
-      word-wrap: break-word;
-    }
-
-    .set-buttons button:hover,
-    .answer-key-btn:hover {
-      background: var(--selected-bg);
-      transform: scale(1.05);
-    }
-
-    /* Cheat Sheet and Reset Button Container */
-    .answer-key-container {
-      margin: 10px 0;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .answer-key-container .answer-key-btn,
-    .answer-key-container .reset-btn {
-      background: var(--button-bg);
-      color: var(--button-text);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1em;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      min-width: 100px;
-      max-width: 100%;
-      word-wrap: break-word;
-    }
-
-    .answer-key-container .answer-key-btn:hover,
-    .answer-key-container .reset-btn:hover {
-      background: var(--selected-bg);
-      transform: scale(1.05);
-    }
-
-    /* Reset Button Specific Styles */
-    .reset-btn {
-      background: var(--button-bg);
-      color: var(--button-text);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1em;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      min-width: 100px;
-      max-width: 100%;
-      word-wrap: break-word;
-    }
-
-    .reset-btn:hover {
-      background: var(--no-match-bg); /* Light Red */
-      transform: scale(1.05);
-    }
-
-    /* Stats bar - moved inside top-bar */
 
     /* Main content */
     #game-area {
@@ -369,8 +303,8 @@
     }
 
     .hamburger {
-      width: 25px; /* Reduced from 35px */
-      height: 22px; /* Adjusted proportionally */
+      width: 20px; /* Reduced from 25px */
+      height: 18px; /* Reduced from 22px */
       position: relative;
       cursor: pointer;
     }
@@ -378,7 +312,7 @@
     .hamburger span {
       display: block;
       position: absolute;
-      height: 3px; /* Reduced from 4px */
+      height: 3px; /* Reduced from 3px */
       width: 100%;
       background: var(--text-color);
       border-radius: 4px;
@@ -391,10 +325,10 @@
       top: 0;
     }
     .hamburger span:nth-child(2) {
-      top: 9px; /* Adjusted from 13px */
+      top: 7px; /* Adjusted from 9px */
     }
     .hamburger span:nth-child(3) {
-      top: 18px; /* Adjusted from 26px */
+      top: 14px; /* Adjusted from 18px */
     }
 
     /* Slide-up panel for advanced settings */
@@ -648,6 +582,56 @@
       transform: scale(1.05);
     }
 
+    /* Cheat Sheet and Reset Button Container */
+    .answer-key-container {
+      margin: 10px 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .answer-key-container .answer-key-btn,
+    .answer-key-container .reset-btn {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1em;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+
+    .answer-key-container .answer-key-btn:hover,
+    .answer-key-container .reset-btn:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
+    }
+
+    /* Reset Button Specific Styles */
+    .reset-btn {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1em;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      min-width: 100px;
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+
+    .reset-btn:hover {
+      background: var(--no-match-bg); /* Light Red */
+      transform: scale(1.05);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       #game {
@@ -672,10 +656,6 @@
 
       .siItem {
         font-size: 1.5em;
-      }
-
-      .answer-key-container {
-        margin-top: 10px;
       }
 
       /* Ensure columns stay side by side */
@@ -705,18 +685,18 @@
 
       /* Reduce hamburger size even more */
       .hamburger {
-        width: 20px;
-        height: 18px;
+        width: 18px;
+        height: 16px;
       }
 
       .hamburger span:nth-child(1) {
         top: 0;
       }
       .hamburger span:nth-child(2) {
-        top: 7px;
+        top: 6px;
       }
       .hamburger span:nth-child(3) {
-        top: 14px;
+        top: 12px;
       }
     }
   </style>
@@ -728,21 +708,17 @@
       <h1>Sinhala Alphabet</h1>
     </div>
     <div class="stats-bar">
-      <div class="badge">
+      <div class="badge" id="progressBadge">
         <span>Progress:</span><span class="value" id="progressCount">0/0</span>
       </div>
-      <div class="badge">
+      <div class="badge inactive" id="vowelsBadge">
         <span>Vowels:</span><span class="value" id="vowelsLearnedCount">0</span>/<span id="vowelsTotal"></span>
       </div>
-      <div class="badge">
+      <div class="badge inactive" id="consonantsBadge">
         <span>Consonants:</span><span class="value" id="consonantsLearnedCount">0</span>/<span id="consonantsTotal"></span>
       </div>
-    </div>
-    <div class="actions">
-      <div class="set-buttons">
-        <button id="vowelsBtn">Vowels</button>
-        <button id="consonantsBtn">Consonants</button>
-        <button id="allBtn">All</button>
+      <div class="badge inactive" id="allBadge">
+        <span>All:</span><span class="value" id="allLearnedCount">0</span>/<span id="allTotal"></span>
       </div>
     </div>
   </div>
@@ -917,9 +893,10 @@
     const vowelsTotal = document.getElementById('vowelsTotal');
     const consonantsTotal = document.getElementById('consonantsTotal');
 
-    const vowelsBtn = document.getElementById('vowelsBtn');
-    const consonantsBtn = document.getElementById('consonantsBtn');
-    const allBtn = document.getElementById('allBtn');
+    const vowelsBadge = document.getElementById('vowelsBadge');
+    const consonantsBadge = document.getElementById('consonantsBadge');
+    const allBadge = document.getElementById('allBadge');
+
     const applySettingsBtn = document.getElementById('applySettingsBtn');
 
     const vowelsBtnBanner = document.getElementById('vowelsBtnBanner');
@@ -944,42 +921,40 @@
     // Initialize totals
     vowelsTotal.textContent = vowels.length;
     consonantsTotal.textContent = consonants.length;
+    allBadge.innerHTML = `<span>All:</span><span class="value" id="allLearnedCount">0</span>/<span id="allTotal">${vowels.length + consonants.length}</span>`;
 
-    // Event Listeners for Set Selection Buttons (Top Bar)
-    vowelsBtn.addEventListener('click', () => { 
+    // Event Listeners for Set Selection via Badges
+    vowelsBadge.addEventListener('click', () => { 
       currentSet = vowels; 
-      switchSet(); 
-      hideIntroMessage(); 
+      switchSet('vowels'); 
     });
 
-    consonantsBtn.addEventListener('click', () => { 
+    consonantsBadge.addEventListener('click', () => { 
       currentSet = consonants; 
-      switchSet(); 
-      hideIntroMessage(); 
+      switchSet('consonants'); 
     });
 
-    allBtn.addEventListener('click', () => { 
+    allBadge.addEventListener('click', () => { 
       currentSet = vowels.concat(consonants); 
-      switchSet(); 
-      hideIntroMessage(); 
+      switchSet('all'); 
     });
 
     // Event Listeners for Set Selection Buttons (Intro Banner)
     vowelsBtnBanner.addEventListener('click', () => { 
       currentSet = vowels; 
-      switchSet(); 
+      switchSet('vowels'); 
       hideIntroMessage(); 
     });
 
     consonantsBtnBanner.addEventListener('click', () => { 
       currentSet = consonants; 
-      switchSet(); 
+      switchSet('consonants'); 
       hideIntroMessage(); 
     });
 
     allBtnBanner.addEventListener('click', () => { 
       currentSet = vowels.concat(consonants); 
-      switchSet(); 
+      switchSet('all'); 
       hideIntroMessage(); 
     });
 
@@ -1020,6 +995,8 @@
         allLetters = [];
         // Reset UI
         updateStats();
+        // Reset badges
+        setActiveBadge(null);
         document.getElementById('game-area').style.display = 'none';
         introMessage.style.display = 'flex';
       }
@@ -1068,6 +1045,7 @@
         if (!loadProgress()) {
           // No saved progress yet
         } else {
+          setActiveBadge(data.currentSetType || 'all');
           adjustActiveSetForCurrentSet();
           loadNewRound();
         }
@@ -1126,7 +1104,15 @@
     });
 
     // Function to Switch Sets
-    function switchSet() {
+    function switchSet(setType) {
+      setActiveBadge(setType);
+      if (setType === 'vowels') {
+        currentSet = vowels;
+      } else if (setType === 'consonants') {
+        currentSet = consonants;
+      } else {
+        currentSet = vowels.concat(consonants);
+      }
       adjustActiveSetForCurrentSet();
       loadNewRound();
       saveProgress();
@@ -1151,7 +1137,7 @@
         let needed = initialActiveSize - activeSet.length;
         let toAdd = remainingLetters.slice(0, needed);
         activeSet = activeSet.concat(toAdd);
-        remainingLetters = remainingLetters.slice(needed);
+        remainingLetters = remainingLetters.slice(toAdd.length);
       }
     }
 
@@ -1246,6 +1232,8 @@
       }
       vowelsLearnedCount.textContent = learnedVowels.size;
       consonantsLearnedCount.textContent = learnedConsonants.size;
+      // Update "All" counter
+      allLearnedCount.textContent = learnedVowels.size + learnedConsonants.size;
     }
 
     // Function to Shuffle an Array (Fisher-Yates Algorithm)
@@ -1365,8 +1353,8 @@
       if (versionDisplay) {
         versionDisplay.textContent = version;
       }
-      // Optional: Dynamically fetch from GitHub (uncomment if needed)
       
+      // Optional: Dynamically fetch from GitHub (uncomment if needed)
       const githubRepo = "clstacy/sinhala"; // Corrected repository name
       fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
         .then(response => response.json())
@@ -1386,6 +1374,23 @@
       if (introMessage) {
         introMessage.style.display = 'none';
         document.getElementById('game-area').style.display = 'flex';
+      }
+    }
+
+    // Function to Set Active Badge
+    function setActiveBadge(setType) {
+      // Remove active class from all badges
+      vowelsBadge.classList.remove('active');
+      consonantsBadge.classList.remove('active');
+      allBadge.classList.remove('active');
+
+      // Add active class to the selected badge
+      if (setType === 'vowels') {
+        vowelsBadge.classList.add('active');
+      } else if (setType === 'consonants') {
+        consonantsBadge.classList.add('active');
+      } else {
+        allBadge.classList.add('active');
       }
     }
   </script>
