@@ -48,17 +48,6 @@
       }
     }
 
-    #introMessage {
-      border-radius: 5px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-    }
-
-    #introMessage span {
-      cursor: pointer;
-    }
-    
     body {
       font-family: sans-serif;
       background: var(--bg-color);
@@ -158,11 +147,12 @@
     .badge span.value {
       font-weight: bold;
     }
-    
+
     /* Main content */
     #game-area {
       padding: 20px;
       flex: 1 0 auto;
+      position: relative;
     }
 
     #game {
@@ -392,6 +382,40 @@
       text-decoration:underline;
     }
 
+    /* Intro Message */
+    #introMessage {
+      display: none; /* Hidden by default */
+      padding: 40px 20px;
+      background: var(--accent-color);
+      color: white;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .banner-btn {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1em;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin: 5px;
+      min-width: 120px;
+    }
+
+    .banner-btn:hover {
+      background: var(--selected-bg);
+    }
+
     /* Footer */
     footer {
       background: var(--footer-bg);
@@ -400,6 +424,7 @@
       font-size:0.9em;
       text-align:center;
       border-top:1px solid var(--border-color);
+      flex-shrink: 0;
     }
 
     footer a {
@@ -409,6 +434,12 @@
 
     footer a:hover {
       text-decoration:underline;
+    }
+
+    .version-info {
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-left: 5px;
     }
 
   </style>
@@ -442,14 +473,17 @@
     </div>
   </div>
   
-  <div id="introMessage" style="display: none; padding: 20px; background: var(--accent-color); color: white; text-align: center; font-size: 1.2em; font-weight: bold;">
-  CLICK ON 
-  <button id="vowelsBtnBanner" class="banner-btn">VOWELS</button>, 
-  <button id="consonantsBtnBanner" class="banner-btn">CONSONANTS</button>, OR 
-  <button id="allBtnBanner" class="banner-btn">ALL</button> TO GET STARTED!
-</div>
+  <!-- Intro Message for First-Time Users -->
+  <div id="introMessage">
+    <div>Click on one to get started!</div>
+    <div>
+      <button id="vowelsBtnBanner" class="banner-btn">VOWELS</button>
+      <button id="consonantsBtnBanner" class="banner-btn">CONSONANTS</button>
+      <button id="allBtnBanner" class="banner-btn">ALL</button>
+    </div>
+  </div>
   
-  <div id="game-area">
+  <div id="game-area" style="display: none;"> <!-- Hidden initially -->
     <div id="game">
       <div class="column" id="leftCol"></div>
       <div class="column" id="rightCol"></div>
@@ -512,6 +546,7 @@
   </footer>
 
   <script>
+    // Data for vowels and consonants
     const vowels = [
       {en:'a', si:'අ'},
       {en:'ā', si:'ආ'},
@@ -567,12 +602,14 @@
       {en:'fa', si:'ෆ'}
     ];
 
+    // Game parameters with default values
     let initialActiveSize = 5;
     let WELL_LEARNED_THRESHOLD = 5;
     let PHASE_UP_THRESHOLD = 0.75;
     let PHASE_ADD_COUNT = 5;
     let ROUND_SIZE = 5;
 
+    // Game state variables
     let currentSet = [];
     let allLetters = []; 
     let activeSet = [];
@@ -587,8 +624,8 @@
     let learnedVowels = new Set();
     let learnedConsonants = new Set();
 
-    const attemptsCount = document.getElementById('attemptsCount');
-    const matchesCount = document.getElementById('matchesCount');
+    // DOM Elements
+    const progressCount = document.getElementById('progressCount');
     const vowelsLearnedCount = document.getElementById('vowelsLearnedCount');
     const consonantsLearnedCount = document.getElementById('consonantsLearnedCount');
     const vowelsTotal = document.getElementById('vowelsTotal');
@@ -599,35 +636,62 @@
     const allBtn = document.getElementById('allBtn');
     const applySettingsBtn = document.getElementById('applySettingsBtn');
 
-    const initialActiveSizeInput = document.getElementById('initialActiveSizeInput');
-    const wellLearnedThresholdInput = document.getElementById('wellLearnedThresholdInput');
-    const phaseUpThresholdInput = document.getElementById('phaseUpThresholdInput');
-    const phaseAddCountInput = document.getElementById('phaseAddCountInput');
-    const roundSizeInput = document.getElementById('roundSizeInput');
+    const vowelsBtnBanner = document.getElementById('vowelsBtnBanner');
+    const consonantsBtnBanner = document.getElementById('consonantsBtnBanner');
+    const allBtnBanner = document.getElementById('allBtnBanner');
 
+    const introMessage = document.getElementById('introMessage');
+
+    const answerKeyBtn = document.getElementById('answerKeyBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const answerList = document.getElementById('answerList');
+
+    const versionDisplay = document.getElementById('versionDisplay');
+
+    // Initialize totals
     vowelsTotal.textContent = vowels.length;
     consonantsTotal.textContent = consonants.length;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const introMessage = document.getElementById('introMessage');
-    
-      // Check if it's the first time the user opens the site
-      const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
-    
-      if (isFirstTime) {
-        introMessage.style.display = 'block'; // Show the intro message
-        localStorage.setItem('sinhalaGameVisited', 'true'); // Mark as visited
-      }
-  
-      // Hide the intro message if clicked
-      introMessage.addEventListener('click', () => {
-        introMessage.style.display = 'none';
-      });
+    // Event Listeners for Set Selection Buttons (Top Bar)
+    vowelsBtn.addEventListener('click', () => { 
+      currentSet = vowels; 
+      switchSet(); 
+      hideIntroMessage(); // Hide intro message if visible
+    });
 
-      vowelsBtn.addEventListener('click', () => { currentSet = vowels; switchSet(); });
-      consonantsBtn.addEventListener('click', () => { currentSet = consonants; switchSet(); });
-      allBtn.addEventListener('click', () => { currentSet = vowels.concat(consonants); switchSet(); });
-    
+    consonantsBtn.addEventListener('click', () => { 
+      currentSet = consonants; 
+      switchSet(); 
+      hideIntroMessage(); 
+    });
+
+    allBtn.addEventListener('click', () => { 
+      currentSet = vowels.concat(consonants); 
+      switchSet(); 
+      hideIntroMessage(); 
+    });
+
+    // Event Listeners for Set Selection Buttons (Intro Banner)
+    vowelsBtnBanner.addEventListener('click', () => { 
+      currentSet = vowels; 
+      switchSet(); 
+      hideIntroMessage(); 
+    });
+
+    consonantsBtnBanner.addEventListener('click', () => { 
+      currentSet = consonants; 
+      switchSet(); 
+      hideIntroMessage(); 
+    });
+
+    allBtnBanner.addEventListener('click', () => { 
+      currentSet = vowels.concat(consonants); 
+      switchSet(); 
+      hideIntroMessage(); 
+    });
+
+    // Event Listener for Applying Settings
     applySettingsBtn.addEventListener('click', () => {
       if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
       if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
@@ -638,8 +702,8 @@
       adjustActiveSetForCurrentSet();
       loadNewRound();
     });
-      
-    // Hamburger toggle
+
+    // Hamburger toggle for advanced settings
     const hamburger = document.getElementById('hamburger');
     const settingsPanel = document.getElementById('settingsPanel');
     let panelOpen = false;
@@ -648,12 +712,7 @@
       settingsPanel.classList.toggle('open', panelOpen);
     });
 
-    // Modal for Answer Key
-    const answerKeyBtn = document.getElementById('answerKeyBtn');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const answerList = document.getElementById('answerList');
-
+    // Modal for Letter Guide
     answerKeyBtn.addEventListener('click', () => {
       populateAnswerList();
       modalOverlay.classList.add('active');
@@ -669,6 +728,34 @@
       }
     });
 
+    // Intro Message Display for First-Time Users
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if it's the first time the user opens the site
+      const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
+
+      if (isFirstTime) {
+        introMessage.style.display = 'flex'; // Show the intro message
+        document.getElementById('game-area').style.display = 'none'; // Hide game area
+        localStorage.setItem('sinhalaGameVisited', 'true'); // Mark as visited
+      } else {
+        introMessage.style.display = 'none'; // Hide intro message
+        document.getElementById('game-area').style.display = 'block'; // Show game area
+        // Load progress if available
+        if (!loadProgress()) {
+          // No saved progress yet, wait for user to choose set
+        } else {
+          adjustActiveSetForCurrentSet();
+          loadNewRound();
+        }
+      }
+
+      // Hide the intro message when a button is clicked is handled by event listeners above
+
+      // Initialize Version Display
+      displayVersion();
+    });
+
+    // Event Listener for Game Items
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('enItem') && !e.target.classList.contains('hidden')) {
         if (selectedEn) selectedEn.classList.remove('selected');
@@ -722,26 +809,38 @@
         saveProgress();
       }
     });
-    });
-    
+
+    // Function to Switch Sets
     function switchSet() {
       adjustActiveSetForCurrentSet();
       loadNewRound();
       saveProgress();
+      // Show the game area
+      document.getElementById('game-area').style.display = 'block';
+      // Hide intro message
+      hideIntroMessage();
     }
 
+    // Function to Adjust Active Set Based on Current Set and Parameters
     function adjustActiveSetForCurrentSet() {
+      // Ensure guessCounts for all letters in currentSet
       currentSet.forEach(l => {
         if (guessCounts[l.si] == null) guessCounts[l.si] = 0;
       });
 
+      // Filter activeSet to only those in currentSet
       activeSet = activeSet.filter(l => currentSet.some(cl => cl.si === l.si));
+
+      // Rebuild allLetters from currentSet
       allLetters = [...currentSet];
+
+      // Build a pool of letters not in activeSet
       let usedSis = new Set(activeSet.map(l => l.si));
       let unused = currentSet.filter(l => !usedSis.has(l.si));
       remainingLetters = unused;
       shuffle(remainingLetters);
 
+      // If activeSet too small, add some from remainingLetters
       if (activeSet.length < initialActiveSize) {
         let needed = initialActiveSize - activeSet.length;
         let toAdd = remainingLetters.slice(0, needed);
@@ -750,13 +849,14 @@
       }
     }
 
+    // Function for Weighted Random Selection of Letters for a Round
     function getWeightedRandomSubset(letterArray, n) {
       let weights = [];
       let totalWeight = 0;
       letterArray.forEach(l => {
         const count = guessCounts[l.si] || 0;
-        const w = 1/(1+count);
-        weights.push({letter: l, w});
+        const w = 1 / (1 + count);
+        weights.push({ letter: l, w });
         totalWeight += w;
       });
 
@@ -764,7 +864,7 @@
       for (let i = 0; i < n; i++) {
         const r = Math.random() * totalWeight;
         let cumulative = 0;
-        for (let {letter, w} of weights) {
+        for (let { letter, w } of weights) {
           cumulative += w;
           if (r <= cumulative) {
             chosen.push(letter);
@@ -775,6 +875,7 @@
       return chosen;
     }
 
+    // Function to Load a New Round
     function loadNewRound() {
       selectedEn = null;
       selectedSi = null;
@@ -810,6 +911,7 @@
       saveProgress();
     }
 
+    // Function to Handle Correct Matches
     function onCorrectMatch(siLetter) {
       guessCounts[siLetter] = (guessCounts[siLetter] || 0) + 1;
 
@@ -825,6 +927,7 @@
       saveProgress();
     }
 
+    // Function to Update Stats Display
     function updateStats() {
       const progressCount = document.getElementById('progressCount'); // Get the combined progress element
       if (progressCount) {
@@ -836,6 +939,7 @@
       consonantsLearnedCount.textContent = learnedConsonants.size;
     }
 
+    // Function to Shuffle an Array (Fisher-Yates Algorithm)
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random()*(i+1));
@@ -844,6 +948,7 @@
       return array;
     }
 
+    // Function to Save Progress to localStorage
     function saveProgress() {
       const data = {
         attempts,
@@ -851,9 +956,9 @@
         guessCounts,
         learnedVowels: Array.from(learnedVowels),
         learnedConsonants: Array.from(learnedConsonants),
-        activeSet: activeSet.map(l => ({en:l.en, si:l.si})),
-        allLetters: allLetters.map(l => ({en:l.en, si:l.si})),
-        remainingLetters: remainingLetters.map(l => ({en:l.en, si:l.si})),
+        activeSet: activeSet.map(l => ({en: l.en, si: l.si})),
+        allLetters: allLetters.map(l => ({en: l.en, si: l.si})),
+        remainingLetters: remainingLetters.map(l => ({en: l.en, si: l.si})),
         currentSetType: getCurrentSetType(),
         initialActiveSize,
         WELL_LEARNED_THRESHOLD,
@@ -864,6 +969,7 @@
       localStorage.setItem('sinhalaprogress', JSON.stringify(data));
     }
 
+    // Function to Load Progress from localStorage
     function loadProgress() {
       const dataStr = localStorage.getItem('sinhalaprogress');
       if (!dataStr) return false;
@@ -894,18 +1000,21 @@
       return true;
     }
 
+    // Function to Find Letter Object from en and si
     function findLetterObject({en, si}) {
       const all = vowels.concat(consonants);
       return all.find(x => x.en === en && x.si === si) || {en, si};
     }
 
+    // Function to Determine Current Set Type
     function getCurrentSetType() {
-      if (currentSet.length === vowels.length && currentSet.every(l=> vowels.some(v=>v.si===l.si))) return 'vowels';
-      if (currentSet.length === consonants.length && currentSet.every(l=> consonants.some(c=>c.si===l.si))) return 'consonants';
-      if (currentSet.length === vowels.length+consonants.length) return 'all';
+      if (currentSet.length === vowels.length && currentSet.every(l => vowels.some(v => v.si === l.si))) return 'vowels';
+      if (currentSet.length === consonants.length && currentSet.every(l => consonants.some(c => c.si === l.si))) return 'consonants';
+      if (currentSet.length === vowels.length + consonants.length) return 'all';
       return 'all';
     }
 
+    // Function to Update Parameter Input Fields with Current Values
     function updateParameterInputs() {
       initialActiveSizeInput.value = initialActiveSize;
       wellLearnedThresholdInput.value = WELL_LEARNED_THRESHOLD;
@@ -914,6 +1023,7 @@
       roundSizeInput.value = ROUND_SIZE;
     }
 
+    // Function to Populate Answer List in Modal
     function populateAnswerList() {
       answerList.innerHTML = '';
       const fullSet = vowels.concat(consonants);
@@ -931,25 +1041,39 @@
       });
     }
 
-    window.addEventListener('load', () => {
-      if (!loadProgress()) {
-        // No saved progress yet
-      } else {
-        adjustActiveSetForCurrentSet();
-        loadNewRound();
+    // Function to Display Current Version
+    function displayVersion() {
+      // Manually set the version
+      /*
+      const version = "v0.2.0"; // Update this manually with each release
+      if (versionDisplay) {
+        versionDisplay.textContent = version;
       }
-    });
+      */
 
-    const githubRepo = "clatcy/sinhala"; // Replace with your repo
-    fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
-      .then(response => response.json())
-      .then(data => {
-        const versionDisplay = document.getElementById('versionDisplay');
-        if (versionDisplay && data.tag_name) {
-          versionDisplay.textContent = data.tag_name;
-        }
-      })
-      .catch(console.error);
+      // Dynamically fetch from GitHub (uncomment if needed)
+      const githubRepo = "clstacy/sinhala";
+      fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.tag_name) {
+            versionDisplay.textContent = data.tag_name;
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching version from GitHub:", error);
+        });
+      
+    }
+
+    // Function to Hide Intro Message
+    function hideIntroMessage() {
+      if (introMessage) {
+        introMessage.style.display = 'none';
+        document.getElementById('game-area').style.display = 'block';
+      }
+    }
+
   </script>
 
 </body>
