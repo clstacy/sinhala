@@ -125,6 +125,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
+      flex-wrap: wrap;
       padding: 10px 0;
       background: var(--stats-bg);
       border-bottom: 1px solid var(--border-color);
@@ -137,7 +138,10 @@
       font-size: 0.9em;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 5px;
+      min-width: 120px;
+      text-align: center;
     }
 
     .badge span.value {
@@ -417,10 +421,7 @@
 
   <div class="stats-bar">
     <div class="badge">
-      <span>Attempts:</span><span class="value" id="attemptsCount">0</span>
-    </div>
-    <div class="badge">
-      <span>Matches:</span><span class="value" id="matchesCount">0</span>
+      <span>Progress:</span><span class="value" id="progressCount">0/0</span>
     </div>
     <div class="badge">
       <span>Vowels:</span><span class="value" id="vowelsLearnedCount">0</span>/<span id="vowelsTotal"></span>
@@ -489,6 +490,9 @@
   <footer>
     Made by <a href="https://clstacy.github.io" target="_blank">Carson Stacy</a> • 
     Source code available at: <a href="https://github.com/clstacy/sinhala" target="_blank">GitHub</a>
+    <div class="version-info">
+      <small>Version: <span id="versionDisplay">Loading...</span></small>
+    </div>
   </footer>
 
   <script>
@@ -789,8 +793,12 @@
     }
 
     function updateStats() {
-      attemptsCount.textContent = attempts;
-      matchesCount.textContent = matches;
+      const progressCount = document.getElementById('progressCount'); // Get the combined progress element
+      if (progressCount) {
+        progressCount.textContent = `${attempts}/${matches}`; // Update as "Attempts/Matches"
+      }
+
+      // Update vowels and consonants learned stats
       vowelsLearnedCount.textContent = learnedVowels.size;
       consonantsLearnedCount.textContent = learnedConsonants.size;
     }
@@ -898,6 +906,17 @@
         loadNewRound();
       }
     });
+
+    const githubRepo = "clatcy/sinhala"; // Replace with your repo
+    fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
+      .then(response => response.json())
+      .then(data => {
+        const versionDisplay = document.getElementById('versionDisplay');
+        if (versionDisplay && data.tag_name) {
+          versionDisplay.textContent = data.tag_name;
+        }
+      })
+      .catch(console.error);
   </script>
 
 </body>
