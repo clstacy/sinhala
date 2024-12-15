@@ -1,527 +1,713 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sinhala Alphabet Matching Game</title>
-  <meta name="description" content="A matching game to practice the Sinhala alphabet. Match Sinhala letters with English transliterations." />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sinhala Alphabet</title>
+  <meta name="description" content="Matching game to learn the Sinhala letters." />
   <meta name="author" content="Carson Stacy" />
-  <meta name="keywords" content="Sinhala, Alphabet, Learning Game, Sinhala Alphabet, Language Learning, Adaptive Learning, Matching Game" />
-<style>
-  body {
-    font-family: sans-serif;
-    background: #121212;
-    color: #ffffff;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-  }
+  <meta name="keywords" content="Sinhala, Alphabet, Learning Game, Language Learning" />
 
-  h1 {
-    margin-bottom: 10px;
-    color: #ffffff;
-  }
+  <style>
+    /* Dark/Light theme using prefers-color-scheme */
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --accent-color: #2f7a2f;
+      --border-color: #cccccc;
+      --button-bg: #eeeeee;
+      --button-text: #000000;
+      --item-bg: #f9f9f9;
+      --item-text: #000000;
+      --selected-bg: #ddd;
+      --matched-bg: #a8e6a1;
+      --no-match-bg: #f4a7a7;
+      --stats-bg: #f0f0f0;
+      --badge-bg: #e0e0e0;
+      --panel-bg: #ffffff;
+    }
 
-  #buttons, #parameters {
-    margin-bottom: 20px;
-  }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+        --accent-color: #2f7a2f;
+        --border-color: #555555;
+        --button-bg: #333333;
+        --button-text: #ffffff;
+        --item-bg: #1e1e1e;
+        --item-text: #ffffff;
+        --selected-bg: #2d2d2d;
+        --matched-bg: #2f7a2f;
+        --no-match-bg: #7a2f2f;
+        --stats-bg: #1a1a1a;
+        --badge-bg: #333333;
+        --panel-bg: #1e1e1e;
+      }
+    }
 
-  button {
-    padding: 10px 15px;
-    margin: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    background: #333333;
-    color: #ffffff;
-    border: 1px solid #555555;
-  }
+    body {
+      font-family: sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
 
-  input {
-    background: #333333;
-    color: #ffffff;
-    border: 1px solid #555555;
-    width: 60px;
-    text-align: center;
-    margin: 0 5px;
-  }
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-color);
+    }
 
-  #stats {
-    margin-bottom: 20px;
-    font-size: 1.1em;
-    color: #cccccc;
-  }
+    .top-bar h1 {
+      font-size: 1.4em;
+      margin: 0;
+    }
 
-  #game {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
-    margin-top: 30px;
-    flex-wrap: wrap;
-  }
+    .set-buttons {
+      display: flex;
+      gap: 5px;
+    }
 
-  .column {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
+    .set-buttons button {
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9em;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-  .item {
-    background: #1e1e1e;
-    border: 2px solid #444444;
-    width: 120px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    user-select: none;
-    text-align: center;
-    position: relative;
-    color: #ffffff;
-    opacity: 1;
-  }
+    .set-buttons button:hover {
+      background: var(--selected-bg);
+    }
 
-  .enItem {
-    font-size: 1.5em;
-  }
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 0;
+      background: var(--stats-bg);
+      border-bottom: 1px solid var(--border-color);
+    }
 
-  .siItem {
-    font-size: 2em;
-  }
+    .badge {
+      background: var(--badge-bg);
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-  .selected {
-    background: #2d2d2d;
-  }
+    .badge span.value {
+      font-weight: bold;
+    }
 
-  .matched {
-    background: #2f7a2f !important;
-  }
+    /* Main content */
+    #game-area {
+      padding: 20px;
+    }
 
-  .no-match {
-    background: #7a2f2f !important;
-  }
+    #game {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
 
-  .hidden {
-    visibility: hidden;
-  }
-</style>
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .item {
+      background: var(--item-bg);
+      border: 2px solid var(--border-color);
+      width: 120px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      text-align: center;
+      position: relative;
+      color: var(--item-text);
+      opacity: 1;
+      transition: background 0.3s, color 0.3s, border 0.3s;
+      border-radius: 5px;
+    }
+
+    .enItem {
+      font-size: 1.4em;
+    }
+
+    .siItem {
+      font-size: 1.8em;
+    }
+
+    .selected {
+      background: var(--selected-bg);
+    }
+
+    .matched {
+      background: var(--matched-bg) !important;
+    }
+
+    .no-match {
+      background: var(--no-match-bg) !important;
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+    /* Hamburger menu for advanced settings */
+    .hamburger-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+    }
+
+    .hamburger {
+      width: 35px;
+      height: 30px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 4px;
+      width: 100%;
+      background: var(--text-color);
+      border-radius: 4px;
+      opacity: 1;
+      left: 0;
+      transition: .25s ease-in-out;
+    }
+
+    .hamburger span:nth-child(1) {
+      top: 0;
+    }
+    .hamburger span:nth-child(2) {
+      top: 13px;
+    }
+    .hamburger span:nth-child(3) {
+      top: 26px;
+    }
+
+    /* Slide-up panel for advanced settings */
+    .panel {
+      position: fixed;
+      bottom: -400px;
+      left: 0;
+      width: 100%;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      padding: 20px;
+      transition: bottom 0.3s;
+      z-index: 998;
+    }
+
+    .panel.open {
+      bottom: 0;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+
+    .panel label {
+      display: block;
+      margin: 5px 0;
+      font-size: 0.9em;
+    }
+
+    .panel input {
+      margin-left: 10px;
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
+      width: 60px;
+      text-align: center;
+      border-radius: 3px;
+      padding: 3px;
+    }
+
+    .panel button {
+      margin-top: 10px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9em;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .panel button:hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Sinhala Alphabet Matching</h1>
-<p>Progress saved. Larger text, no phonetics. Parameters adjustable. Random group introduction.</p>
+  <div class="top-bar">
+    <h1>Sinhala Alphabet Matching</h1>
+    <div class="set-buttons">
+      <button id="vowelsBtn">Vowels</button>
+      <button id="consonantsBtn">Consonants</button>
+      <button id="allBtn">All</button>
+    </div>
+  </div>
 
-<div id="stats">
-  Attempts: <span id="attemptsCount">0</span> | 
-  Matches: <span id="matchesCount">0</span> | 
-  Vowels Learned: <span id="vowelsLearnedCount">0</span>/<span id="vowelsTotal"></span> | 
-  Consonants Learned: <span id="consonantsLearnedCount">0</span>/<span id="consonantsTotal"></span>
-</div>
+  <div class="stats-bar">
+    <div class="badge">
+      <span>Attempts:</span><span class="value" id="attemptsCount">0</span>
+    </div>
+    <div class="badge">
+      <span>Matches:</span><span class="value" id="matchesCount">0</span>
+    </div>
+    <div class="badge">
+      <span>Vowels:</span><span class="value" id="vowelsLearnedCount">0</span>/<span id="vowelsTotal"></span>
+    </div>
+    <div class="badge">
+      <span>Consonants:</span><span class="value" id="consonantsLearnedCount">0</span>/<span id="consonantsTotal"></span>
+    </div>
+  </div>
 
-<div id="parameters">
-  Initial Active Size: <input id="initialActiveSizeInput" type="number" min="1"/><br/>
-  Well Learned Threshold: <input id="wellLearnedThresholdInput" type="number" min="1"/><br/>
-  Phase Up Threshold (0-1): <input id="phaseUpThresholdInput" type="number" step="0.05" min="0" max="1"/><br/>
-  Phase Add Count: <input id="phaseAddCountInput" type="number" min="1"/><br/>
-  Round Size: <input id="roundSizeInput" type="number" min="1"/><br/><br/>
-  <button id="applySettingsBtn">Apply Settings</button>
-</div>
+  <div id="game-area">
+    <div id="game">
+      <div class="column" id="leftCol"></div>
+      <div class="column" id="rightCol"></div>
+    </div>
+  </div>
 
-<div id="buttons">
-  <button id="vowelsBtn">Vowels</button>
-  <button id="consonantsBtn">Consonants</button>
-  <button id="allBtn">All</button>
-</div>
+  <!-- Hamburger for advanced settings -->
+  <div class="hamburger-container">
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
 
-<div id="game">
-  <div class="column" id="leftCol"></div>
-  <div class="column" id="rightCol"></div>
-</div>
+  <!-- Panel with advanced settings -->
+  <div class="panel" id="settingsPanel">
+    <h2>Advanced Settings</h2>
+    <label>
+      Initial Active Size:
+      <input id="initialActiveSizeInput" type="number" min="1" value="4"/>
+    </label>
+    <label>
+      Well Learned Threshold:
+      <input id="wellLearnedThresholdInput" type="number" min="1" value="4"/>
+    </label>
+    <label>
+      Phase Up Threshold (0-1):
+      <input id="phaseUpThresholdInput" type="number" step="0.05" min="0" max="1" value="0.75"/>
+    </label>
+    <label>
+      Phase Add Count:
+      <input id="phaseAddCountInput" type="number" min="1" value="4"/>
+    </label>
+    <label>
+      Round Size:
+      <input id="roundSizeInput" type="number" min="1" value="4"/>
+    </label><br/>
+    <button id="applySettingsBtn">Apply Settings</button>
+  </div>
 
-<script>
-// Vowels and consonants
-const vowels = [
-  {en:'a', si:'අ'},
-  {en:'ā', si:'ආ'},
-  {en:'æ', si:'ඇ'},
-  {en:'ǣ', si:'ඈ'},
-  {en:'i', si:'ඉ'},
-  {en:'ī', si:'ඊ'},
-  {en:'u', si:'උ'},
-  {en:'ū', si:'ඌ'},
-  {en:'e', si:'එ'},
-  {en:'ē', si:'ඒ'},
-  {en:'ai', si:'ඓ'},
-  {en:'o', si:'ඔ'},
-  {en:'ō', si:'ඕ'},
-  {en:'au', si:'ඖ'}
-];
+  <script>
+    const vowels = [
+      {en:'a', si:'අ'},
+      {en:'ā', si:'ආ'},
+      {en:'æ', si:'ඇ'},
+      {en:'ǣ', si:'ඈ'},
+      {en:'i', si:'ඉ'},
+      {en:'ī', si:'ඊ'},
+      {en:'u', si:'උ'},
+      {en:'ū', si:'ඌ'},
+      {en:'e', si:'එ'},
+      {en:'ē', si:'ඒ'},
+      {en:'ai', si:'ඓ'},
+      {en:'o', si:'ඔ'},
+      {en:'ō', si:'ඕ'},
+      {en:'au', si:'ඖ'}
+    ];
 
-const consonants = [
-  {en:'ka', si:'ක'},
-  {en:'kha', si:'ඛ'},
-  {en:'ga', si:'ග'},
-  {en:'gha', si:'ඝ'},
-  {en:'ṅa', si:'ඞ'},
-  {en:'ca', si:'ච'},
-  {en:'cha', si:'ඡ'},
-  {en:'ja', si:'ජ'},
-  {en:'jha', si:'ඣ'},
-  {en:'ña', si:'ඤ'},
-  {en:'ṭa', si:'ට'},
-  {en:'ṭha', si:'ඨ'},
-  {en:'ḍa', si:'ඩ'},
-  {en:'ḍha', si:'ඪ'},
-  {en:'ṇa', si:'ණ'},
-  {en:'ta', si:'ත'},
-  {en:'tha', si:'ථ'},
-  {en:'da', si:'ද'},
-  {en:'dha', si:'ධ'},
-  {en:'na', si:'න'},
-  {en:'pa', si:'ප'},
-  {en:'pha', si:'ඵ'},
-  {en:'ba', si:'බ'},
-  {en:'bha', si:'භ'},
-  {en:'ma', si:'ම'},
-  {en:'ya', si:'ය'},
-  {en:'ra', si:'ර'},
-  {en:'la', si:'ල'},
-  {en:'va', si:'ව'},
-  {en:'śa', si:'ශ'},
-  {en:'ṣa', si:'ෂ'},
-  {en:'sa', si:'ස'},
-  {en:'ha', si:'හ'},
-  {en:'ḷa', si:'ළ'},
-  {en:'fa', si:'ෆ'}
-];
+    const consonants = [
+      {en:'ka', si:'ක'},
+      {en:'kha', si:'ඛ'},
+      {en:'ga', si:'ග'},
+      {en:'gha', si:'ඝ'},
+      {en:'ṅa', si:'ඞ'},
+      {en:'ca', si:'ච'},
+      {en:'cha', si:'ඡ'},
+      {en:'ja', si:'ජ'},
+      {en:'jha', si:'ඣ'},
+      {en:'ña', si:'ඤ'},
+      {en:'ṭa', si:'ට'},
+      {en:'ṭha', si:'ඨ'},
+      {en:'ḍa', si:'ඩ'},
+      {en:'ḍha', si:'ඪ'},
+      {en:'ṇa', si:'ණ'},
+      {en:'ta', si:'ත'},
+      {en:'tha', si:'ථ'},
+      {en:'da', si:'ද'},
+      {en:'dha', si:'ධ'},
+      {en:'na', si:'න'},
+      {en:'pa', si:'ප'},
+      {en:'pha', si:'ඵ'},
+      {en:'ba', si:'බ'},
+      {en:'bha', si:'භ'},
+      {en:'ma', si:'ම'},
+      {en:'ya', si:'ය'},
+      {en:'ra', si:'ර'},
+      {en:'la', si:'ල'},
+      {en:'va', si:'ව'},
+      {en:'śa', si:'ශ'},
+      {en:'ṣa', si:'ෂ'},
+      {en:'sa', si:'ස'},
+      {en:'ha', si:'හ'},
+      {en:'ḷa', si:'ළ'},
+      {en:'fa', si:'ෆ'}
+    ];
 
-// Default parameters
-let initialActiveSize = 4;
-let WELL_LEARNED_THRESHOLD = 4;
-let PHASE_UP_THRESHOLD = 0.75;
-let PHASE_ADD_COUNT = 4;
-let ROUND_SIZE = 4;
+    let initialActiveSize = 4;
+    let WELL_LEARNED_THRESHOLD = 4;
+    let PHASE_UP_THRESHOLD = 0.75;
+    let PHASE_ADD_COUNT = 4;
+    let ROUND_SIZE = 4;
 
-let currentSet = [];
-let allLetters = []; 
-let activeSet = [];
-let remainingLetters = []; // letters not yet introduced to activeSet
-let guessCounts = {};
-let selectedEn = null;
-let selectedSi = null;
+    let currentSet = [];
+    let allLetters = []; 
+    let activeSet = [];
+    let remainingLetters = []; 
+    let guessCounts = {};
+    let selectedEn = null;
+    let selectedSi = null;
 
-let attempts = 0;
-let matches = 0;
-let matchedPairs = 0;
-let learnedVowels = new Set();
-let learnedConsonants = new Set();
+    let attempts = 0;
+    let matches = 0;
+    let matchedPairs = 0;
+    let learnedVowels = new Set();
+    let learnedConsonants = new Set();
 
-const attemptsCount = document.getElementById('attemptsCount');
-const matchesCount = document.getElementById('matchesCount');
-const vowelsLearnedCount = document.getElementById('vowelsLearnedCount');
-const consonantsLearnedCount = document.getElementById('consonantsLearnedCount');
-const vowelsTotal = document.getElementById('vowelsTotal');
-const consonantsTotal = document.getElementById('consonantsTotal');
+    const attemptsCount = document.getElementById('attemptsCount');
+    const matchesCount = document.getElementById('matchesCount');
+    const vowelsLearnedCount = document.getElementById('vowelsLearnedCount');
+    const consonantsLearnedCount = document.getElementById('consonantsLearnedCount');
+    const vowelsTotal = document.getElementById('vowelsTotal');
+    const consonantsTotal = document.getElementById('consonantsTotal');
 
-const vowelsBtn = document.getElementById('vowelsBtn');
-const consonantsBtn = document.getElementById('consonantsBtn');
-const allBtn = document.getElementById('allBtn');
-const applySettingsBtn = document.getElementById('applySettingsBtn');
+    const vowelsBtn = document.getElementById('vowelsBtn');
+    const consonantsBtn = document.getElementById('consonantsBtn');
+    const allBtn = document.getElementById('allBtn');
+    const applySettingsBtn = document.getElementById('applySettingsBtn');
 
-const initialActiveSizeInput = document.getElementById('initialActiveSizeInput');
-const wellLearnedThresholdInput = document.getElementById('wellLearnedThresholdInput');
-const phaseUpThresholdInput = document.getElementById('phaseUpThresholdInput');
-const phaseAddCountInput = document.getElementById('phaseAddCountInput');
-const roundSizeInput = document.getElementById('roundSizeInput');
+    const initialActiveSizeInput = document.getElementById('initialActiveSizeInput');
+    const wellLearnedThresholdInput = document.getElementById('wellLearnedThresholdInput');
+    const phaseUpThresholdInput = document.getElementById('phaseUpThresholdInput');
+    const phaseAddCountInput = document.getElementById('phaseAddCountInput');
+    const roundSizeInput = document.getElementById('roundSizeInput');
 
-vowelsTotal.textContent = vowels.length;
-consonantsTotal.textContent = consonants.length;
+    vowelsTotal.textContent = vowels.length;
+    consonantsTotal.textContent = consonants.length;
 
-vowelsBtn.addEventListener('click', () => {
-  currentSet = vowels;
-  switchSet();
-});
-consonantsBtn.addEventListener('click', () => {
-  currentSet = consonants;
-  switchSet();
-});
-allBtn.addEventListener('click', () => {
-  currentSet = vowels.concat(consonants);
-  switchSet();
-});
+    vowelsBtn.addEventListener('click', () => { currentSet = vowels; switchSet(); });
+    consonantsBtn.addEventListener('click', () => { currentSet = consonants; switchSet(); });
+    allBtn.addEventListener('click', () => { currentSet = vowels.concat(consonants); switchSet(); });
 
-applySettingsBtn.addEventListener('click', () => {
-  if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
-  if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
-  if (phaseUpThresholdInput.value) PHASE_UP_THRESHOLD = parseFloat(phaseUpThresholdInput.value);
-  if (phaseAddCountInput.value) PHASE_ADD_COUNT = parseInt(phaseAddCountInput.value);
-  if (roundSizeInput.value) ROUND_SIZE = parseInt(roundSizeInput.value);
-  saveProgress();
-  adjustActiveSetForCurrentSet();
-  loadNewRound();
-});
+    applySettingsBtn.addEventListener('click', () => {
+      if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
+      if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
+      if (phaseUpThresholdInput.value) PHASE_UP_THRESHOLD = parseFloat(phaseUpThresholdInput.value);
+      if (phaseAddCountInput.value) PHASE_ADD_COUNT = parseInt(phaseAddCountInput.value);
+      if (roundSizeInput.value) ROUND_SIZE = parseInt(roundSizeInput.value);
+      saveProgress();
+      adjustActiveSetForCurrentSet();
+      loadNewRound();
+    });
 
-function switchSet() {
-  adjustActiveSetForCurrentSet();
-  loadNewRound();
-  saveProgress();
-}
+    // Hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const settingsPanel = document.getElementById('settingsPanel');
+    let panelOpen = false;
+    hamburger.addEventListener('click', () => {
+      panelOpen = !panelOpen;
+      settingsPanel.classList.toggle('open', panelOpen);
+    });
 
-function adjustActiveSetForCurrentSet() {
-  // Ensure guessCounts for all letters in currentSet
-  currentSet.forEach(l => {
-    if (guessCounts[l.si] == null) guessCounts[l.si] = 0;
-  });
-
-  // Filter activeSet to only those in currentSet
-  activeSet = activeSet.filter(l => currentSet.some(cl => cl.si === l.si));
-
-  // Rebuild allLetters from currentSet (for reference)
-  allLetters = [...currentSet];
-
-  // Build a pool of letters not in activeSet
-  let usedSis = new Set(activeSet.map(l=>l.si));
-  let unused = currentSet.filter(l => !usedSis.has(l.si));
-  remainingLetters = unused; 
-  shuffle(remainingLetters);
-
-  // If activeSet too small, add some from remainingLetters
-  if (activeSet.length < initialActiveSize) {
-    let needed = initialActiveSize - activeSet.length;
-    let toAdd = remainingLetters.slice(0, needed);
-    activeSet = activeSet.concat(toAdd);
-    remainingLetters = remainingLetters.slice(needed);
-  }
-}
-
-function getWeightedRandomSubset(letterArray, n) {
-  let weights = [];
-  let totalWeight = 0;
-  letterArray.forEach(l => {
-    const count = guessCounts[l.si] || 0;
-    const w = 1/(1+count);
-    weights.push({letter: l, w});
-    totalWeight += w;
-  });
-
-  let chosen = [];
-  for (let i = 0; i < n; i++) {
-    const r = Math.random() * totalWeight;
-    let cumulative = 0;
-    for (let {letter, w} of weights) {
-      cumulative += w;
-      if (r <= cumulative) {
-        chosen.push(letter);
-        break;
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('enItem') && !e.target.classList.contains('hidden')) {
+        if (selectedEn) selectedEn.classList.remove('selected');
+        selectedEn = e.target;
+        selectedEn.classList.add('selected');
+      } else if (e.target.classList.contains('siItem') && !e.target.classList.contains('hidden')) {
+        if (selectedSi) selectedSi.classList.remove('selected');
+        selectedSi = e.target;
+        selectedSi.classList.add('selected');
       }
+
+      if (selectedEn && selectedSi) {
+        attempts++;
+        updateStats();
+
+        if (selectedEn.dataset.match === selectedSi.dataset.match) {
+          matches++;
+          matchedPairs++;
+          const letter = selectedSi.dataset.match;
+          onCorrectMatch(letter);
+
+          if (vowels.some(v => v.si === letter)) {
+            learnedVowels.add(letter);
+          } else if (consonants.some(c => c.si === letter)) {
+            learnedConsonants.add(letter);
+          }
+          updateStats();
+
+          selectedEn.classList.add('matched');
+          selectedSi.classList.add('matched');
+
+          selectedEn.classList.add('hidden');
+          selectedSi.classList.add('hidden');
+          selectedEn = null;
+          selectedSi = null;
+
+          if (matchedPairs === ROUND_SIZE) {
+            loadNewRound();
+          }
+        } else {
+          selectedEn.classList.add('no-match');
+          selectedSi.classList.add('no-match');
+
+          setTimeout(() => {
+            selectedEn.classList.remove('selected', 'no-match');
+            selectedSi.classList.remove('selected', 'no-match');
+            selectedEn = null;
+            selectedSi = null;
+          }, 200);
+        }
+        saveProgress();
+      }
+    });
+
+    function switchSet() {
+      adjustActiveSetForCurrentSet();
+      loadNewRound();
+      saveProgress();
     }
-  }
-  return chosen;
-}
 
-function loadNewRound() {
-  selectedEn = null;
-  selectedSi = null;
-  matchedPairs = 0;
+    function adjustActiveSetForCurrentSet() {
+      currentSet.forEach(l => {
+        if (guessCounts[l.si] == null) guessCounts[l.si] = 0;
+      });
 
-  const chosen = getWeightedRandomSubset(activeSet, ROUND_SIZE);
-
-  const leftCol = document.getElementById('leftCol');
-  const rightCol = document.getElementById('rightCol');
-
-  leftCol.innerHTML = '';
-  rightCol.innerHTML = '';
-
-  const enList = shuffle([...chosen]);
-  const siList = shuffle([...chosen]);
-
-  enList.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'item enItem';
-    div.textContent = p.en;
-    div.dataset.match = p.si;
-    leftCol.appendChild(div);
-  });
-
-  siList.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'item siItem';
-    div.textContent = p.si;
-    div.dataset.match = p.si;
-    rightCol.appendChild(div);
-  });
-
-  saveProgress();
-}
-
-function onCorrectMatch(siLetter) {
-  guessCounts[siLetter] = (guessCounts[siLetter] || 0) + 1;
-
-  let wellLearnedCount = activeSet.filter(l => guessCounts[l.si] >= WELL_LEARNED_THRESHOLD).length;
-  if ((wellLearnedCount / activeSet.length) >= PHASE_UP_THRESHOLD) {
-    // Add next batch from remainingLetters if available
-    if (remainingLetters.length > 0) {
+      activeSet = activeSet.filter(l => currentSet.some(cl => cl.si === l.si));
+      allLetters = [...currentSet];
+      let usedSis = new Set(activeSet.map(l => l.si));
+      let unused = currentSet.filter(l => !usedSis.has(l.si));
+      remainingLetters = unused;
       shuffle(remainingLetters);
-      let toAdd = remainingLetters.slice(0, PHASE_ADD_COUNT);
-      activeSet = activeSet.concat(toAdd);
-      remainingLetters = remainingLetters.slice(toAdd.length);
-    }
-  }
-  saveProgress();
-}
 
-function updateStats() {
-  attemptsCount.textContent = attempts;
-  matchesCount.textContent = matches;
-  vowelsLearnedCount.textContent = learnedVowels.size;
-  consonantsLearnedCount.textContent = learnedConsonants.size;
-}
-
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('enItem') && !e.target.classList.contains('hidden')) {
-    if (selectedEn) selectedEn.classList.remove('selected');
-    selectedEn = e.target;
-    selectedEn.classList.add('selected');
-  } else if (e.target.classList.contains('siItem') && !e.target.classList.contains('hidden')) {
-    if (selectedSi) selectedSi.classList.remove('selected');
-    selectedSi = e.target;
-    selectedSi.classList.add('selected');
-  }
-
-  if (selectedEn && selectedSi) {
-    attempts++;
-    updateStats();
-
-    if (selectedEn.dataset.match === selectedSi.dataset.match) {
-      matches++;
-      matchedPairs++;
-      const letter = selectedSi.dataset.match;
-      onCorrectMatch(letter);
-
-      if (vowels.some(v => v.si === letter)) {
-        learnedVowels.add(letter);
-      } else if (consonants.some(c => c.si === letter)) {
-        learnedConsonants.add(letter);
+      if (activeSet.length < initialActiveSize) {
+        let needed = initialActiveSize - activeSet.length;
+        let toAdd = remainingLetters.slice(0, needed);
+        activeSet = activeSet.concat(toAdd);
+        remainingLetters = remainingLetters.slice(needed);
       }
-      updateStats();
+    }
 
-      selectedEn.classList.add('matched');
-      selectedSi.classList.add('matched');
+    function getWeightedRandomSubset(letterArray, n) {
+      let weights = [];
+      let totalWeight = 0;
+      letterArray.forEach(l => {
+        const count = guessCounts[l.si] || 0;
+        const w = 1/(1+count);
+        weights.push({letter: l, w});
+        totalWeight += w;
+      });
 
-      selectedEn.classList.add('hidden');
-      selectedSi.classList.add('hidden');
+      let chosen = [];
+      for (let i = 0; i < n; i++) {
+        const r = Math.random() * totalWeight;
+        let cumulative = 0;
+        for (let {letter, w} of weights) {
+          cumulative += w;
+          if (r <= cumulative) {
+            chosen.push(letter);
+            break;
+          }
+        }
+      }
+      return chosen;
+    }
+
+    function loadNewRound() {
       selectedEn = null;
       selectedSi = null;
+      matchedPairs = 0;
 
-      if (matchedPairs === ROUND_SIZE) {
+      const chosen = getWeightedRandomSubset(activeSet, ROUND_SIZE);
+
+      const leftCol = document.getElementById('leftCol');
+      const rightCol = document.getElementById('rightCol');
+
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+
+      const enList = shuffle([...chosen]);
+      const siList = shuffle([...chosen]);
+
+      enList.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'item enItem';
+        div.textContent = p.en;
+        div.dataset.match = p.si;
+        leftCol.appendChild(div);
+      });
+
+      siList.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'item siItem';
+        div.textContent = p.si;
+        div.dataset.match = p.si;
+        rightCol.appendChild(div);
+      });
+
+      saveProgress();
+    }
+
+    function onCorrectMatch(siLetter) {
+      guessCounts[siLetter] = (guessCounts[siLetter] || 0) + 1;
+
+      let wellLearnedCount = activeSet.filter(l => guessCounts[l.si] >= WELL_LEARNED_THRESHOLD).length;
+      if ((wellLearnedCount / activeSet.length) >= PHASE_UP_THRESHOLD) {
+        if (remainingLetters.length > 0) {
+          shuffle(remainingLetters);
+          let toAdd = remainingLetters.slice(0, PHASE_ADD_COUNT);
+          activeSet = activeSet.concat(toAdd);
+          remainingLetters = remainingLetters.slice(toAdd.length);
+        }
+      }
+      saveProgress();
+    }
+
+    function updateStats() {
+      attemptsCount.textContent = attempts;
+      matchesCount.textContent = matches;
+      vowelsLearnedCount.textContent = learnedVowels.size;
+      consonantsLearnedCount.textContent = learnedConsonants.size;
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function saveProgress() {
+      const data = {
+        attempts,
+        matches,
+        guessCounts,
+        learnedVowels: Array.from(learnedVowels),
+        learnedConsonants: Array.from(learnedConsonants),
+        activeSet: activeSet.map(l => ({en:l.en, si:l.si})),
+        allLetters: allLetters.map(l => ({en:l.en, si:l.si})),
+        remainingLetters: remainingLetters.map(l => ({en:l.en, si:l.si})),
+        currentSetType: getCurrentSetType(),
+        initialActiveSize,
+        WELL_LEARNED_THRESHOLD,
+        PHASE_UP_THRESHOLD,
+        PHASE_ADD_COUNT,
+        ROUND_SIZE
+      };
+      localStorage.setItem('sinhalaprogress', JSON.stringify(data));
+    }
+
+    function loadProgress() {
+      const dataStr = localStorage.getItem('sinhalaprogress');
+      if (!dataStr) return false;
+      const data = JSON.parse(dataStr);
+      attempts = data.attempts || 0;
+      matches = data.matches || 0;
+      guessCounts = data.guessCounts || {};
+      learnedVowels = new Set(data.learnedVowels || []);
+      learnedConsonants = new Set(data.learnedConsonants || []);
+
+      let setType = data.currentSetType;
+      if (setType === 'vowels') currentSet = vowels;
+      else if (setType === 'consonants') currentSet = consonants;
+      else currentSet = vowels.concat(consonants);
+
+      allLetters = data.allLetters.map(l => findLetterObject(l)) || [];
+      activeSet = data.activeSet.map(l => findLetterObject(l)) || [];
+      remainingLetters = data.remainingLetters.map(l => findLetterObject(l)) || [];
+
+      initialActiveSize = data.initialActiveSize || initialActiveSize;
+      WELL_LEARNED_THRESHOLD = data.WELL_LEARNED_THRESHOLD || WELL_LEARNED_THRESHOLD;
+      PHASE_UP_THRESHOLD = data.PHASE_UP_THRESHOLD || PHASE_UP_THRESHOLD;
+      PHASE_ADD_COUNT = data.PHASE_ADD_COUNT || PHASE_ADD_COUNT;
+      ROUND_SIZE = data.ROUND_SIZE || ROUND_SIZE;
+
+      updateParameterInputs();
+      updateStats();
+      return true;
+    }
+
+    function findLetterObject({en, si}) {
+      const all = vowels.concat(consonants);
+      return all.find(x => x.en === en && x.si === si) || {en, si};
+    }
+
+    function getCurrentSetType() {
+      if (currentSet.length === vowels.length && currentSet.every(l=> vowels.some(v=>v.si===l.si))) return 'vowels';
+      if (currentSet.length === consonants.length && currentSet.every(l=> consonants.some(c=>c.si===l.si))) return 'consonants';
+      if (currentSet.length === vowels.length+consonants.length) return 'all';
+      return 'all';
+    }
+
+    function updateParameterInputs() {
+      initialActiveSizeInput.value = initialActiveSize;
+      wellLearnedThresholdInput.value = WELL_LEARNED_THRESHOLD;
+      phaseUpThresholdInput.value = PHASE_UP_THRESHOLD;
+      phaseAddCountInput.value = PHASE_ADD_COUNT;
+      roundSizeInput.value = ROUND_SIZE;
+    }
+
+    window.addEventListener('load', () => {
+      if (!loadProgress()) {
+        // No saved progress yet
+      } else {
+        adjustActiveSetForCurrentSet();
         loadNewRound();
       }
-    } else {
-      selectedEn.classList.add('no-match');
-      selectedSi.classList.add('no-match');
+    });
+  </script>
 
-      setTimeout(() => {
-        selectedEn.classList.remove('selected', 'no-match');
-        selectedSi.classList.remove('selected', 'no-match');
-        selectedEn = null;
-        selectedSi = null;
-      }, 200);
-    }
-    saveProgress();
-  }
-});
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-// Saving/Loading Progress
-function saveProgress() {
-  const data = {
-    attempts,
-    matches,
-    guessCounts,
-    learnedVowels: Array.from(learnedVowels),
-    learnedConsonants: Array.from(learnedConsonants),
-    activeSet: activeSet.map(l => ({en:l.en, si:l.si})),
-    allLetters: allLetters.map(l => ({en:l.en, si:l.si})),
-    currentSetType: getCurrentSetType(),
-    initialActiveSize,
-    WELL_LEARNED_THRESHOLD,
-    PHASE_UP_THRESHOLD,
-    PHASE_ADD_COUNT,
-    ROUND_SIZE,
-    remainingLetters: remainingLetters.map(l=>({en:l.en, si:l.si}))
-  };
-  localStorage.setItem('sinhalaprogress', JSON.stringify(data));
-}
-
-function loadProgress() {
-  const dataStr = localStorage.getItem('sinhalaprogress');
-  if (!dataStr) return false;
-  const data = JSON.parse(dataStr);
-  attempts = data.attempts || 0;
-  matches = data.matches || 0;
-  guessCounts = data.guessCounts || {};
-  learnedVowels = new Set(data.learnedVowels || []);
-  learnedConsonants = new Set(data.learnedConsonants || []);
-
-  let setType = data.currentSetType;
-  if (setType === 'vowels') currentSet = vowels;
-  else if (setType === 'consonants') currentSet = consonants;
-  else currentSet = vowels.concat(consonants);
-
-  allLetters = data.allLetters.map(l => findLetterObject(l)) || [];
-  activeSet = data.activeSet.map(l => findLetterObject(l)) || [];
-  remainingLetters = data.remainingLetters.map(l => findLetterObject(l)) || [];
-
-  initialActiveSize = data.initialActiveSize || initialActiveSize;
-  WELL_LEARNED_THRESHOLD = data.WELL_LEARNED_THRESHOLD || WELL_LEARNED_THRESHOLD;
-  PHASE_UP_THRESHOLD = data.PHASE_UP_THRESHOLD || PHASE_UP_THRESHOLD;
-  PHASE_ADD_COUNT = data.PHASE_ADD_COUNT || PHASE_ADD_COUNT;
-  ROUND_SIZE = data.ROUND_SIZE || ROUND_SIZE;
-
-  updateParameterInputs();
-
-  updateStats();
-  return true;
-}
-
-function findLetterObject({en, si}) {
-  const all = vowels.concat(consonants);
-  return all.find(x => x.en === en && x.si === si) || {en, si};
-}
-
-function getCurrentSetType() {
-  if (currentSet.length === vowels.length && currentSet.every(l=> vowels.some(v=>v.si===l.si))) return 'vowels';
-  if (currentSet.length === consonants.length && currentSet.every(l=> consonants.some(c=>c.si===l.si))) return 'consonants';
-  if (currentSet.length === vowels.length+consonants.length) return 'all';
-  return 'all';
-}
-
-function updateParameterInputs() {
-  initialActiveSizeInput.value = initialActiveSize;
-  wellLearnedThresholdInput.value = WELL_LEARNED_THRESHOLD;
-  phaseUpThresholdInput.value = PHASE_UP_THRESHOLD;
-  phaseAddCountInput.value = PHASE_ADD_COUNT;
-  roundSizeInput.value = ROUND_SIZE;
-}
-
-window.addEventListener('load', () => {
-  if (!loadProgress()) {
-    // No saved progress, wait for user to choose set
-  } else {
-    // Loaded progress
-    adjustActiveSetForCurrentSet();
-    loadNewRound();
-  }
-});
-</script>
 </body>
 </html>
