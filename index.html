@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) - optional tracking script -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D30M9BZSM5"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-D30M9BZSM5');
   </script>
   
@@ -24,7 +23,6 @@
       box-sizing: border-box;
     }
 
-    /* Dark/Light theme using prefers-color-scheme */
     :root {
       --bg-color: #ffffff;
       --text-color: #000000;
@@ -37,8 +35,8 @@
       --selected-bg: #cce5ff; /* Light Blue */
       --matched-bg: #a8e6a1;  /* Light Green */
       --no-match-bg: #f4a7a7; /* Light Red */
-      --stats-bg: transparent; /* Changed to transparent */
-      --badge-bg: transparent; /* Changed to transparent */
+      --stats-bg: transparent;
+      --badge-bg: transparent;
       --panel-bg: #ffffff;
       --footer-bg: #fafafa;
       --active-badge-bg: #d1e7dd; /* Light green for active badge */
@@ -58,8 +56,8 @@
         --selected-bg: #375a7f; /* Darker Blue */
         --matched-bg: #2f7a2f;  /* Darker Green */
         --no-match-bg: #7a2f2f; /* Darker Red */
-        --stats-bg: transparent; /* Changed to transparent */
-        --badge-bg: transparent; /* Changed to transparent */
+        --stats-bg: transparent;
+        --badge-bg: transparent;
         --panel-bg: #1e1e1e;
         --footer-bg: #1a1a1a;
         --active-badge-bg: #134e4a; /* Darker green for active badge */
@@ -89,7 +87,6 @@
       border-bottom: 1px solid var(--border-color);
       background: var(--bg-color);
     }
-
     @media (min-width: 769px) {
       .top-bar {
         flex-direction: row;
@@ -111,7 +108,6 @@
         justify-content: flex-end;
       }
     }
-
     @media (max-width: 768px) {
       .top-bar {
         flex-direction: column;
@@ -125,7 +121,7 @@
         padding: 5px 0;
       }
       .actions {
-        display: none; /* Hidden as set selection is moved to stats-bar */
+        display: none;
       }
     }
 
@@ -135,7 +131,6 @@
       align-items: flex-start;
       gap: 2px;
     }
-
     .title-area h1 {
       font-size: 1.4em;
       margin: 0;
@@ -146,46 +141,105 @@
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-      padding: 5px 0; /* Reduced padding */
+      padding: 5px 0;
       background: var(--stats-bg);
-      /* Removed border */
       position: relative;
     }
 
-    .badge {
-      background: var(--badge-bg);
-      border-radius: 4px;
-      padding: 5px 10px; /* Reduced padding */
-      font-size: 0.9em; /* Reduced font size */
+    .badge-clickable {
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+    .badge-clickable:hover {
+      background: var(--selected-bg);
+      transform: scale(1.05);
+    }
+    
+    .badge-accuracy {
+      border: none;
+      cursor: default;
+      padding: 5px 10px;
+      font-size: 0.9em;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      min-width: 100px; /* Reduced min-width */
+      min-width: 100px;
       text-align: center;
       transition: background 0.3s, transform 0.2s;
-      cursor: pointer; /* Make badges clickable */
-      border: 1px solid transparent; /* Remove visible borders */
+      background: var(--badge-bg);
+    }
+    .badge-accuracy .value {
+      font-weight: bold;
     }
 
-    .badge.active {
+    .badge-clickable {
+      background: var(--badge-bg);
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-width: 100px;
+      text-align: center;
+      transition: background 0.3s, transform 0.2s;
+      border-radius: 4px;
+    }
+
+    .badge-clickable.active {
       background: var(--active-badge-bg);
-      border-color: var(--border-color); /* Optional: Add border when active */
-    }
-
-    .badge.inactive:hover {
-      background: var(--selected-bg);
-      transform: scale(1.05);
     }
 
     @media (max-width: 768px) {
-      .badge {
-        min-width: 80px; /* Further reduce min-width on smaller screens */
+      .badge-clickable,
+      .badge-accuracy {
+        min-width: 80px;
       }
     }
-
-    .badge span.value {
+    .badge-clickable span.value {
       font-weight: bold;
+    }
+
+    /* Progress container */
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+   
+    .progress-label {
+      width: 120px;
+      text-align: right;
+    }
+    .progress-bar-container {
+      background: #ccc;
+      width: 120px;
+      height: 10px;
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      background: var(--accent-color);
+      width: 0%;
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.3s;
+    }
+    .progress-percent {
+      font-size: 0.8em;
+      width: 40px;
+      text-align: left;
     }
 
     /* Main content */
@@ -197,11 +251,10 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      max-width: 800px; /* Added to prevent stretching on desktop */
-      margin: 0 auto; /* Center the game area */
+      max-width: 800px;
+      margin: 0 auto;
       box-sizing: border-box;
     }
-
     #game {
       display: flex;
       justify-content: center;
@@ -209,22 +262,19 @@
       gap: 20px;
       flex-wrap: nowrap;
       width: 100%;
-      /* Removed max-width to allow full width on small screens */
     }
-
     .column {
       display: flex;
       flex-direction: column;
       gap: 15px;
       align-items: center;
-      flex: 1 1 50%; /* Ensures equal spacing */
-      min-width: 0; /* Ensures columns can shrink properly */
+      flex: 1 1 50%;
+      min-width: 0;
     }
-
     .item {
       background: var(--item-bg);
       border: 2px solid var(--border-color);
-      width: 100%; /* Ensures items fill the column's width */
+      width: 100%;
       height: 60px;
       display: flex;
       align-items: center;
@@ -242,35 +292,29 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .enItem {
       font-size: 1.4em;
     }
-
     .siItem {
       font-size: 1.8em;
     }
-
     .selected {
       background: var(--selected-bg);
       transform: scale(1.05);
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
     .matched {
       background: var(--matched-bg) !important;
       border-color: transparent;
       color: var(--text-color);
       animation: fadeIn 0.5s forwards;
     }
-
     .no-match {
       background: var(--no-match-bg) !important;
       border-color: transparent;
       color: var(--text-color);
       animation: shake 0.3s;
     }
-
     @keyframes shake {
       0% { transform: translate(1px, 1px) rotate(0deg); }
       10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -284,35 +328,30 @@
       90% { transform: translate(1px, 2px) rotate(0deg); }
       100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
-
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
-
     .hidden {
       visibility: hidden;
     }
 
-    /* Hamburger menu for advanced settings */
     .hamburger-container {
       position: fixed;
       bottom: 20px;
       right: 20px;
       z-index: 999;
     }
-
     .hamburger {
-      width: 20px; /* Reduced from 25px */
-      height: 18px; /* Reduced from 22px */
+      width: 20px;
+      height: 18px;
       position: relative;
       cursor: pointer;
     }
-
     .hamburger span {
       display: block;
       position: absolute;
-      height: 3px; /* Reduced from 3px */
+      height: 3px;
       width: 100%;
       background: var(--text-color);
       border-radius: 4px;
@@ -320,21 +359,19 @@
       left: 0;
       transition: .25s ease-in-out;
     }
-
     .hamburger span:nth-child(1) {
       top: 0;
     }
     .hamburger span:nth-child(2) {
-      top: 7px; /* Adjusted from 9px */
+      top: 7px;
     }
     .hamburger span:nth-child(3) {
-      top: 14px; /* Adjusted from 18px */
+      top: 14px;
     }
 
-    /* Slide-up panel for advanced settings */
     .panel {
       position: fixed;
-      bottom: -400px;
+      bottom: -450px;
       left: 0;
       width: 100%;
       background: var(--panel-bg);
@@ -344,33 +381,30 @@
       transition: bottom 0.3s;
       z-index: 998;
     }
-
     .panel.open {
       bottom: 0;
     }
-
     .panel h2 {
       margin-top: 0;
       font-size: 1.2em;
     }
-
     .panel label {
       display: block;
       margin: 10px 0;
       font-size: 1em;
     }
-
-    .panel input {
+    .panel input, .panel select {
       margin-left: 10px;
       background: var(--button-bg);
       color: var(--button-text);
       border: 1px solid var(--border-color);
-      width: 60px;
-      text-align: center;
       border-radius: 3px;
       padding: 5px;
     }
-
+    .panel input[type=number] {
+      width: 60px;
+      text-align: center;
+    }
     .panel button {
       margin-top: 15px;
       background: var(--accent-color);
@@ -382,12 +416,10 @@
       cursor: pointer;
       transition: opacity 0.3s;
     }
-
     .panel button:hover {
       opacity: 0.9;
     }
 
-    /* Modal for Cheat Sheet */
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
@@ -397,11 +429,9 @@
       align-items:center;
       z-index:1000;
     }
-
     .modal-overlay.active {
       display: flex;
     }
-
     .modal {
       background: var(--panel-bg);
       padding: 20px;
@@ -413,12 +443,10 @@
       border: 1px solid var(--border-color);
       position: relative;
     }
-
     .modal h2 {
       margin-top:0;
       font-size:1.5em;
     }
-
     .modal .close-btn {
       background:none;
       border:none;
@@ -429,7 +457,6 @@
       right: 15px;
       cursor:pointer;
     }
-
     .answer-list {
       display:flex;
       flex-wrap:wrap;
@@ -437,7 +464,6 @@
       margin-top: 20px;
       justify-content: center;
     }
-
     .answer-list .answer-item {
       background:var(--item-bg);
       border:1px solid var(--border-color);
@@ -453,44 +479,35 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
-    /* Responsive Sizes for Answer Items */
     @media (max-width: 768px) {
       .answer-list .answer-item {
         width: 80px;
       }
     }
-
     @media (max-width: 480px) {
       .answer-list .answer-item {
         width: 60px;
       }
     }
-
     .answer-list .answer-item:hover {
       background: var(--selected-bg);
       transform: scale(1.05);
     }
-
     .answer-list .answer-item .si {
       font-size:1.5em;
       margin-bottom:5px;
     }
-
     .modal .wiki-link {
       margin-top:20px;
       font-size:1em;
     }
-
     .modal .wiki-link a {
       color: var(--accent-color);
       text-decoration:none;
     }
-
     .modal .wiki-link a:hover {
       text-decoration:underline;
     }
-
     .cheat-sheet-buttons {
       margin-top: 20px;
       display: flex;
@@ -498,7 +515,6 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .cheat-sheet-buttons button {
       background: var(--button-bg);
       color: var(--button-text);
@@ -512,13 +528,11 @@
       max-width: 100%;
       word-wrap: break-word;
     }
-
     .cheat-sheet-buttons button:hover {
       background: var(--selected-bg);
       transform: scale(1.05);
     }
 
-    /* Footer */
     footer {
       background: var(--footer-bg);
       color: var(--text-color);
@@ -528,25 +542,21 @@
       border-top:1px solid var(--border-color);
       flex-shrink: 0;
     }
-
     footer a {
       color: var(--accent-color);
       text-decoration:none;
     }
-
     footer a:hover {
       text-decoration:underline;
     }
-
     .version-info {
       font-weight: bold;
       color: var(--accent-color);
       margin-left: 5px;
     }
 
-    /* Intro Message */
     #introMessage {
-      display: none; /* Hidden by default */
+      display: none;
       padding: 40px 20px;
       background: var(--accent-color);
       color: white;
@@ -561,7 +571,6 @@
       flex-direction: column;
       gap: 20px;
     }
-
     .banner-btn {
       background: var(--button-bg);
       color: var(--button-text);
@@ -576,13 +585,11 @@
       max-width: 100%;
       word-wrap: break-word;
     }
-
     .banner-btn:hover {
       background: var(--selected-bg);
       transform: scale(1.05);
     }
 
-    /* Cheat Sheet and Reset Button Container */
     .answer-key-container {
       margin: 10px 0;
       display: flex;
@@ -590,9 +597,9 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .answer-key-container .answer-key-btn,
-    .answer-key-container .reset-btn {
+    .answer-key-container .reset-btn,
+    .answer-key-container .quiz-btn {
       background: var(--button-bg);
       color: var(--button-text);
       border: 1px solid var(--border-color);
@@ -605,90 +612,80 @@
       max-width: 100%;
       word-wrap: break-word;
     }
-
     .answer-key-container .answer-key-btn:hover,
-    .answer-key-container .reset-btn:hover {
+    .answer-key-container .reset-btn:hover,
+    .answer-key-container .quiz-btn:hover {
       background: var(--selected-bg);
       transform: scale(1.05);
     }
-
-    /* Reset Button Specific Styles */
-    .reset-btn {
-      background: var(--button-bg);
-      color: var(--button-text);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1em;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      min-width: 100px;
-      max-width: 100%;
-      word-wrap: break-word;
-    }
-
     .reset-btn:hover {
-      background: var(--no-match-bg); /* Light Red */
+      background: var(--no-match-bg);
       transform: scale(1.05);
     }
+    .quiz-question {
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .quiz-options button {
+      text-align: center;
+    }
+    .quiz-result {
+      margin-top: 10px;
+      font-size: 1.1em;
+      text-align: center;
+      font-weight: bold;
+    }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
       #game {
         gap: 15px;
         max-width: 100%;
       }
-
       .column {
-        flex: 1 1 50%; /* Ensures equal width for columns */
+        flex: 1 1 50%;
       }
-
       .item {
         max-width: 100%;
         width: 100%;
         height: 50px;
         font-size: 1em;
       }
-
       .enItem {
         font-size: 1.2em;
       }
-
       .siItem {
         font-size: 1.5em;
       }
-
-      /* Ensure columns stay side by side */
       #game {
         flex-wrap: nowrap;
       }
     }
-
-    /* Further adjustments for very small screens */
     @media (max-width: 480px) {
       #game-area {
         padding: 10px;
       }
-
       .item {
         height: 40px;
         font-size: 0.9em;
       }
-
       .enItem {
         font-size: 1em;
       }
-
       .siItem {
         font-size: 1.3em;
       }
-
-      /* Reduce hamburger size even more */
       .hamburger {
         width: 18px;
         height: 16px;
       }
-
       .hamburger span:nth-child(1) {
         top: 0;
       }
@@ -708,23 +705,49 @@
       <h1>Sinhala Alphabet</h1>
     </div>
     <div class="stats-bar">
-      <div class="badge" id="progressBadge">
-        <span>Progress:</span><span class="value" id="progressCount">0/0</span>
+      <div class="badge-accuracy" id="accuracyBadge">
+        <span>Accuracy:</span><span class="value" id="progressCount">0/0</span>
       </div>
-      <div class="badge inactive" id="vowelsBadge">
+      <div class="badge-clickable inactive" id="vowelsBadge">
         <span>Vowels:</span><span class="value" id="vowelsLearnedCount">0</span>/<span id="vowelsTotal"></span>
       </div>
-      <div class="badge inactive" id="consonantsBadge">
+      <div class="badge-clickable inactive" id="consonantsBadge">
         <span>Consonants:</span><span class="value" id="consonantsLearnedCount">0</span>/<span id="consonantsTotal"></span>
       </div>
-      <div class="badge inactive" id="allBadge">
+      <div class="badge-clickable inactive" id="allBadge">
         <span>All:</span><span class="value" id="allLearnedCount">0</span>/<span id="allTotal"></span>
       </div>
+      <button id="helpBtn" class="banner-btn" style="font-size:0.9em;">Help</button>
+    </div>
+  </div>
+
+  <div class="progress-section" id="progressSection" style="display:none;">
+    <div class="progress-row">
+      <div class="progress-label">Vowels:</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="vowelProgressFill"></div>
+      </div>
+      <div class="progress-percent" id="vowelProgressText">0%</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-label">Consonants:</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="consonantProgressFill"></div>
+      </div>
+      <div class="progress-percent" id="consonantProgressText">0%</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-label">Total:</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="totalProgressFill"></div>
+      </div>
+      <div class="progress-percent" id="totalProgressText">0%</div>
     </div>
   </div>
 
   <div class="answer-key-container">
     <button class="answer-key-btn" id="answerKeyBtn">Cheat Sheet</button>
+    <button class="quiz-btn" id="quizBtn">Review / Quiz</button>
     <button class="reset-btn" id="resetBtn">Reset Progress</button>
   </div>
 
@@ -745,7 +768,6 @@
     </div>
   </div>
 
-  <!-- Hamburger for advanced settings -->
   <div class="hamburger-container">
     <div class="hamburger" id="hamburger">
       <span></span>
@@ -754,9 +776,16 @@
     </div>
   </div>
 
-  <!-- Panel with advanced settings -->
   <div class="panel" id="settingsPanel">
     <h2>Advanced Settings</h2>
+    <label>
+      Difficulty:
+      <select id="difficultySelect">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Intermediate</option>
+        <option value="hard">Advanced</option>
+      </select>
+    </label>
     <label>
       Initial Active Size:
       <input id="initialActiveSizeInput" type="number" min="1" value="5"/>
@@ -780,23 +809,45 @@
     <button id="applySettingsBtn">Apply Settings</button>
   </div>
 
-  <!-- Modal Overlay for Cheat Sheet -->
+  <!-- Modal Overlay for Cheat Sheet and Help -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="close-btn" id="closeModalBtn">&times;</button>
-      <h2>Cheat Sheet</h2>
-      <p>All Sinhala letters and their English transliterations:</p>
+      <h2 id="modalTitle">Cheat Sheet</h2>
+      <p id="modalMessage">All Sinhala letters and their English transliterations:</p>
       
-      <div class="cheat-sheet-buttons">
-        <button id="showVowelsBtn">Vowels</button>
-        <button id="showConsonantsBtn">Consonants</button>
-        <button id="showAllBtn">All</button>
+      <!-- Different states for cheat sheet or help, so we wrap them in a container -->
+      <div id="cheatSheetContent">
+        <div class="cheat-sheet-buttons">
+          <button id="showVowelsBtn">Vowels</button>
+          <button id="showConsonantsBtn">Consonants</button>
+          <button id="showAllBtn">All</button>
+        </div>
+        <div class="answer-list" id="answerList"></div>
+        <div class="wiki-link">
+          Learn more about Sinhala language: 
+          <a href="https://en.wikipedia.org/wiki/Sinhalese_language" target="_blank">Wikipedia</a>
+        </div>
       </div>
-      
-      <div class="answer-list" id="answerList"></div>
-      <div class="wiki-link">
-        Learn more about Sinhala language: 
-        <a href="https://en.wikipedia.org/wiki/Sinhalese_language" target="_blank">Wikipedia</a>
+
+      <div id="helpContent" style="display: none;">
+        <p>1. Choose a set (Vowels, Consonants, or All) to begin.</p>
+        <p>2. Click an English transliteration on the left, then the matching Sinhala letter on the right.</p>
+        <p>3. Track your <strong>accuracy</strong> and unlock review/quiz after some practice!</p>
+        <button id="startPlayingBtn" class="banner-btn">Start Learning</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="quizOverlay">
+    <div class="modal">
+      <button class="close-btn" id="closeQuizBtn">&times;</button>
+      <h2>Review / Quiz</h2>
+      <div id="quizContent">
+        <div class="quiz-question" id="quizQuestion"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-result" id="quizResult"></div>
+        <button id="nextQuestionBtn" class="banner-btn" style="margin-top:10px;">Next</button>
       </div>
     </div>
   </div>
@@ -804,11 +855,10 @@
   <footer>
     Made by <a href="https://clstacy.github.io" target="_blank">Carson Stacy</a> • 
     Source code: <a href="https://github.com/clstacy/sinhala" target="_blank">GitHub</a> •
-    <span class="version-info" id="versionDisplay">v0.2.0</span>
+    <span class="version-info" id="versionDisplay">v0.0.0</span>
   </footer>
 
   <script>
-    // Data for vowels and consonants
     const vowels = [
       {en:'a', si:'අ'},
       {en:'ā', si:'ආ'},
@@ -825,7 +875,6 @@
       {en:'ō', si:'ඕ'},
       {en:'au', si:'ඖ'}
     ];
-
     const consonants = [
       {en:'ka', si:'ක'},
       {en:'kha', si:'ඛ'},
@@ -873,9 +922,9 @@
 
     // Game state variables
     let currentSet = [];
-    let allLetters = []; 
+    let allLetters = [];
     let activeSet = [];
-    let remainingLetters = []; 
+    let remainingLetters = [];
     let guessCounts = {};
     let selectedEn = null;
     let selectedSi = null;
@@ -892,11 +941,9 @@
     const consonantsLearnedCount = document.getElementById('consonantsLearnedCount');
     const vowelsTotal = document.getElementById('vowelsTotal');
     const consonantsTotal = document.getElementById('consonantsTotal');
-
     const vowelsBadge = document.getElementById('vowelsBadge');
     const consonantsBadge = document.getElementById('consonantsBadge');
     const allBadge = document.getElementById('allBadge');
-
     const applySettingsBtn = document.getElementById('applySettingsBtn');
 
     const vowelsBtnBanner = document.getElementById('vowelsBtnBanner');
@@ -904,86 +951,162 @@
     const allBtnBanner = document.getElementById('allBtnBanner');
 
     const introMessage = document.getElementById('introMessage');
-
     const answerKeyBtn = document.getElementById('answerKeyBtn');
     const answerKeyBtnBanner = document.getElementById('answerKeyBtnBanner');
     const modalOverlay = document.getElementById('modalOverlay');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const answerList = document.getElementById('answerList');
-
-    const resetBtn = document.getElementById('resetBtn'); // Added Reset Button
+    const resetBtn = document.getElementById('resetBtn');
     const versionDisplay = document.getElementById('versionDisplay');
 
     const showVowelsBtn = document.getElementById('showVowelsBtn');
     const showConsonantsBtn = document.getElementById('showConsonantsBtn');
     const showAllBtn = document.getElementById('showAllBtn');
 
+    const difficultySelect = document.getElementById('difficultySelect');
+    const initialActiveSizeInput = document.getElementById('initialActiveSizeInput');
+    const wellLearnedThresholdInput = document.getElementById('wellLearnedThresholdInput');
+    const phaseUpThresholdInput = document.getElementById('phaseUpThresholdInput');
+    const phaseAddCountInput = document.getElementById('phaseAddCountInput');
+    const roundSizeInput = document.getElementById('roundSizeInput');
+
+    // Progress bars
+    const progressSection = document.getElementById('progressSection');
+    const vowelProgressFill = document.getElementById('vowelProgressFill');
+    const consonantProgressFill = document.getElementById('consonantProgressFill');
+    const totalProgressFill = document.getElementById('totalProgressFill');
+    const vowelProgressText = document.getElementById('vowelProgressText');
+    const consonantProgressText = document.getElementById('consonantProgressText');
+    const totalProgressText = document.getElementById('totalProgressText');
+
+    // Help
+    const helpBtn = document.getElementById('helpBtn');
+    const helpContent = document.getElementById('helpContent');
+    const cheatSheetContent = document.getElementById('cheatSheetContent');
+    const startPlayingBtn = document.getElementById('startPlayingBtn');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+
+    // Quiz
+    const quizBtn = document.getElementById('quizBtn');
+    const quizOverlay = document.getElementById('quizOverlay');
+    const closeQuizBtn = document.getElementById('closeQuizBtn');
+    const quizQuestion = document.getElementById('quizQuestion');
+    const quizOptions = document.getElementById('quizOptions');
+    const quizResult = document.getElementById('quizResult');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    let quizPool = [];
+    let quizIndex = 0;
+
     // Initialize totals
     vowelsTotal.textContent = vowels.length;
     consonantsTotal.textContent = consonants.length;
     allBadge.innerHTML = `<span>All:</span><span class="value" id="allLearnedCount">0</span>/<span id="allTotal">${vowels.length + consonants.length}</span>`;
 
-    // Event Listeners for Set Selection via Badges
-    vowelsBadge.addEventListener('click', () => { 
+    /* ===================== EVENT LISTENERS ===================== */
+
+    // Set Selection via Badges
+    vowelsBadge.addEventListener('click', () => {
+      currentSet = vowels; 
+      switchSet('vowels');
+    });
+    consonantsBadge.addEventListener('click', () => {
+      currentSet = consonants; 
+      switchSet('consonants');
+    });
+    allBadge.addEventListener('click', () => {
+      currentSet = vowels.concat(consonants);
+      switchSet('all');
+    });
+
+    // Set Selection via Intro Banner
+    vowelsBtnBanner.addEventListener('click', () => {
       currentSet = vowels; 
       switchSet('vowels'); 
+      hideIntroMessage();
     });
-
-    consonantsBadge.addEventListener('click', () => { 
+    consonantsBtnBanner.addEventListener('click', () => {
       currentSet = consonants; 
       switchSet('consonants'); 
+      hideIntroMessage();
     });
-
-    allBadge.addEventListener('click', () => { 
+    allBtnBanner.addEventListener('click', () => {
       currentSet = vowels.concat(consonants); 
       switchSet('all'); 
+      hideIntroMessage();
     });
 
-    // Event Listeners for Set Selection Buttons (Intro Banner)
-    vowelsBtnBanner.addEventListener('click', () => { 
-      currentSet = vowels; 
-      switchSet('vowels'); 
-      hideIntroMessage(); 
-    });
-
-    consonantsBtnBanner.addEventListener('click', () => { 
-      currentSet = consonants; 
-      switchSet('consonants'); 
-      hideIntroMessage(); 
-    });
-
-    allBtnBanner.addEventListener('click', () => { 
-      currentSet = vowels.concat(consonants); 
-      switchSet('all'); 
-      hideIntroMessage(); 
-    });
-
-    // Event Listener for Cheat Sheet Buttons in Intro Message
+    // Cheat Sheet Button
     if (answerKeyBtnBanner) {
       answerKeyBtnBanner.addEventListener('click', () => {
-        populateAnswerList('all');
-        modalOverlay.classList.add('active');
+        openCheatSheetModal();
       });
     }
+    answerKeyBtn.addEventListener('click', () => {
+      openCheatSheetModal();
+    });
 
-    // Event Listener for Applying Settings
+    // Modal close
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('active');
+      }
+    });
+
+    // Show Cheat Sheet
+    showVowelsBtn.addEventListener('click', () => { populateAnswerList('vowels'); });
+    showConsonantsBtn.addEventListener('click', () => { populateAnswerList('consonants'); });
+    showAllBtn.addEventListener('click', () => { populateAnswerList('all'); });
+
+    // Help Modal
+    helpBtn.addEventListener('click', () => {
+      modalTitle.textContent = "How To Play";
+      modalMessage.style.display = "none";
+      cheatSheetContent.style.display = "none";
+      helpContent.style.display = "block";
+      modalOverlay.classList.add('active');
+    });
+    startPlayingBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+
+    // Quiz/Review
+    quizBtn.addEventListener('click', () => {
+      startQuiz();
+    });
+    closeQuizBtn.addEventListener('click', () => {
+      quizOverlay.classList.remove('active');
+    });
+    quizOverlay.addEventListener('click', (e) => {
+      if (e.target === quizOverlay) {
+        quizOverlay.classList.remove('active');
+      }
+    });
+    nextQuestionBtn.addEventListener('click', loadNextQuizQuestion);
+
+    // Apply Settings
     applySettingsBtn.addEventListener('click', () => {
-      if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
-      if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
-      if (phaseUpThresholdInput.value) PHASE_UP_THRESHOLD = parseFloat(phaseUpThresholdInput.value);
-      if (phaseAddCountInput.value) PHASE_ADD_COUNT = parseInt(phaseAddCountInput.value);
-      if (roundSizeInput.value) ROUND_SIZE = parseInt(roundSizeInput.value);
+      setUserParameters();
       saveProgress();
       adjustActiveSetForCurrentSet();
       loadNewRound();
+      settingsPanel.classList.remove('open');
+      panelOpen = false;
     });
 
-    // Event Listener for Reset Button
+    // Difficulty Selection
+    difficultySelect.addEventListener('change', () => {
+      applyDifficultySettings();
+    });
+
+    // Reset Button
     resetBtn.addEventListener('click', () => {
       const confirmReset = confirm("Are you sure you want to reset your progress?");
       if (confirmReset) {
         localStorage.removeItem('sinhalaprogress');
-        // Reset variables
         attempts = 0;
         matches = 0;
         guessCounts = {};
@@ -993,16 +1116,15 @@
         remainingLetters = [];
         currentSet = [];
         allLetters = [];
-        // Reset UI
         updateStats();
-        // Reset badges
         setActiveBadge(null);
         document.getElementById('game-area').style.display = 'none';
         introMessage.style.display = 'flex';
+        updateProgressBars();
       }
     });
 
-    // Hamburger toggle for advanced settings
+    // Hamburger toggle
     const hamburger = document.getElementById('hamburger');
     const settingsPanel = document.getElementById('settingsPanel');
     let panelOpen = false;
@@ -1011,49 +1133,7 @@
       settingsPanel.classList.toggle('open', panelOpen);
     });
 
-    // Modal for Cheat Sheet
-    answerKeyBtn.addEventListener('click', () => {
-      populateAnswerList('all');
-      modalOverlay.classList.add('active');
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-      modalOverlay.classList.remove('active');
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) {
-        modalOverlay.classList.remove('active');
-      }
-    });
-
-    // Cheat Sheet Buttons Event Listeners
-    showVowelsBtn.addEventListener('click', () => { populateAnswerList('vowels'); });
-    showConsonantsBtn.addEventListener('click', () => { populateAnswerList('consonants'); });
-    showAllBtn.addEventListener('click', () => { populateAnswerList('all'); });
-
-    // Intro Message Display for First-Time Users
-    document.addEventListener('DOMContentLoaded', () => {
-      const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
-      if (isFirstTime) {
-        introMessage.style.display = 'flex';
-        document.getElementById('game-area').style.display = 'none';
-        localStorage.setItem('sinhalaGameVisited', 'true');
-      } else {
-        introMessage.style.display = 'none';
-        document.getElementById('game-area').style.display = 'flex';
-        if (!loadProgress()) {
-          // No saved progress yet
-        } else {
-          setActiveBadge(data.currentSetType || 'all');
-          adjustActiveSetForCurrentSet();
-          loadNewRound();
-        }
-      }
-      displayVersion();
-    });
-
-    // Event Listener for Game Items
+    // Matching Items
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('enItem') && !e.target.classList.contains('hidden')) {
         if (selectedEn) selectedEn.classList.remove('selected');
@@ -1064,46 +1144,32 @@
         selectedSi = e.target;
         selectedSi.classList.add('selected');
       }
-
-      if (selectedEn && selectedSi) {
-        attempts++;
-        updateStats();
-
-        if (selectedEn.dataset.match === selectedSi.dataset.match) {
-          matches++;
-          matchedPairs++;
-          const letter = selectedSi.dataset.match;
-          onCorrectMatch(letter);
-
-          if (vowels.some(v => v.si === letter)) learnedVowels.add(letter);
-          else if (consonants.some(c => c.si === letter)) learnedConsonants.add(letter);
-          updateStats();
-
-          selectedEn.classList.add('matched');
-          selectedSi.classList.add('matched');
-
-          selectedEn.classList.add('hidden');
-          selectedSi.classList.add('hidden');
-          selectedEn = null;
-          selectedSi = null;
-
-          if (matchedPairs === ROUND_SIZE) loadNewRound();
-        } else {
-          selectedEn.classList.add('no-match');
-          selectedSi.classList.add('no-match');
-
-          setTimeout(() => {
-            selectedEn.classList.remove('selected', 'no-match');
-            selectedSi.classList.remove('selected', 'no-match');
-            selectedEn = null;
-            selectedSi = null;
-          }, 500);
-        }
-        saveProgress();
-      }
+      checkMatch();
     });
 
-    // Function to Switch Sets
+    // On DOM load, check if first time or load progress
+    document.addEventListener('DOMContentLoaded', () => {
+      const isFirstTime = !localStorage.getItem('sinhalaGameVisited');
+      if (isFirstTime) {
+        introMessage.style.display = 'flex';
+        document.getElementById('game-area').style.display = 'none';
+        localStorage.setItem('sinhalaGameVisited', 'true');
+      } else {
+        introMessage.style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
+        if (!loadProgress()) {
+          // No saved progress
+        } else {
+          setActiveBadge(getCurrentSetType());
+          adjustActiveSetForCurrentSet();
+          loadNewRound();
+        }
+      }
+      displayVersion();
+      updateProgressBars(); 
+    });
+
+    /* ===================== CORE FUNCTIONS ===================== */
     function switchSet(setType) {
       setActiveBadge(setType);
       if (setType === 'vowels') {
@@ -1118,9 +1184,35 @@
       saveProgress();
       document.getElementById('game-area').style.display = 'flex';
       hideIntroMessage();
+      progressSection.style.display = 'block'; 
     }
 
-    // Function to Adjust Active Set Based on Current Set and Parameters
+    function hideIntroMessage() {
+      if (introMessage) {
+        introMessage.style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
+      }
+    }
+
+    function setActiveBadge(setType) {
+      vowelsBadge.classList.remove('active');
+      consonantsBadge.classList.remove('active');
+      allBadge.classList.remove('active');
+      vowelsBadge.classList.add('inactive');
+      consonantsBadge.classList.add('inactive');
+      allBadge.classList.add('inactive');
+      if (setType === 'vowels') {
+        vowelsBadge.classList.remove('inactive');
+        vowelsBadge.classList.add('active');
+      } else if (setType === 'consonants') {
+        consonantsBadge.classList.remove('inactive');
+        consonantsBadge.classList.add('active');
+      } else if (setType === 'all') {
+        allBadge.classList.remove('inactive');
+        allBadge.classList.add('active');
+      }
+    }
+
     function adjustActiveSetForCurrentSet() {
       currentSet.forEach(l => {
         if (guessCounts[l.si] == null) guessCounts[l.si] = 0;
@@ -1128,7 +1220,7 @@
       activeSet = activeSet.filter(l => currentSet.some(cl => cl.si === l.si));
       allLetters = [...currentSet];
 
-      let usedSis = new Set(activeSet.map(l => l.si));
+      const usedSis = new Set(activeSet.map(l => l.si));
       let unused = currentSet.filter(l => !usedSis.has(l.si));
       remainingLetters = unused;
       shuffle(remainingLetters);
@@ -1141,39 +1233,6 @@
       }
     }
 
-    // Function for Weighted Random Selection of Letters for a Round
-    function getWeightedRandomSubset(letterArray, n) {
-      let availableLetters = [...letterArray];
-      let chosen = [];
-
-      for (let i = 0; i < n && availableLetters.length > 0; i++) {
-        let roundTotalWeight = 0;
-        availableLetters.forEach(l => {
-          roundTotalWeight += 1 / (1 + (guessCounts[l.si] || 0));
-        });
-
-        const r = Math.random() * roundTotalWeight;
-        let cumulative = 0;
-        let selectedIndex = -1;
-
-        for (let j = 0; j < availableLetters.length; j++) {
-          cumulative += 1 / (1 + (guessCounts[availableLetters[j].si] || 0));
-          if (r <= cumulative) {
-            selectedIndex = j;
-            break;
-          }
-        }
-
-        if (selectedIndex !== -1) {
-          const selectedLetter = availableLetters.splice(selectedIndex, 1)[0];
-          chosen.push(selectedLetter);
-        }
-      }
-
-      return chosen;
-    }
-
-    // Function to Load a New Round
     function loadNewRound() {
       selectedEn = null;
       selectedSi = null;
@@ -1198,7 +1257,6 @@
         div.dataset.match = p.si;
         leftCol.appendChild(div);
       });
-
       siList.forEach(p => {
         const div = document.createElement('div');
         div.className = 'item siItem';
@@ -1208,16 +1266,55 @@
       });
 
       saveProgress();
+      updateProgressBars();
     }
 
-    // Function to Handle Correct Matches
+    function checkMatch() {
+      if (selectedEn && selectedSi) {
+        attempts++;
+        updateStats();
+        if (selectedEn.dataset.match === selectedSi.dataset.match) {
+          matches++;
+          matchedPairs++;
+          const letter = selectedSi.dataset.match;
+          onCorrectMatch(letter);
+
+          if (vowels.some(v => v.si === letter)) learnedVowels.add(letter);
+          else if (consonants.some(c => c.si === letter)) learnedConsonants.add(letter);
+          updateStats();
+          updateProgressBars();
+
+          selectedEn.classList.add('matched');
+          selectedSi.classList.add('matched');
+          selectedEn.classList.add('hidden');
+          selectedSi.classList.add('hidden');
+          selectedEn = null;
+          selectedSi = null;
+
+          if (matchedPairs === ROUND_SIZE) {
+            loadNewRound();
+          }
+        } else {
+          selectedEn.classList.add('no-match');
+          selectedSi.classList.add('no-match');
+          setTimeout(() => {
+            selectedEn.classList.remove('selected', 'no-match');
+            selectedSi.classList.remove('selected', 'no-match');
+            selectedEn = null;
+            selectedSi = null;
+          }, 500);
+        }
+        saveProgress();
+      }
+    }
+
     function onCorrectMatch(siLetter) {
       guessCounts[siLetter] = (guessCounts[siLetter] || 0) + 1;
-      let wellLearnedCount = activeSet.filter(l => guessCounts[l.si] >= WELL_LEARNED_THRESHOLD).length;
+      const wellLearnedCount = activeSet.filter(l => guessCounts[l.si] >= WELL_LEARNED_THRESHOLD).length;
       if ((wellLearnedCount / activeSet.length) >= PHASE_UP_THRESHOLD) {
         if (remainingLetters.length > 0) {
           shuffle(remainingLetters);
-          let toAdd = remainingLetters.slice(0, PHASE_ADD_COUNT);
+          const toAdd = remainingLetters.slice(0, PHASE_ADD_COUNT);
           activeSet = activeSet.concat(toAdd);
           remainingLetters = remainingLetters.slice(toAdd.length);
         }
@@ -1225,18 +1322,33 @@
       saveProgress();
     }
 
-    // Function to Update Stats Display
-    function updateStats() {
-      if (progressCount) {
-        progressCount.textContent = `${matches}/${attempts}`;
+    function getWeightedRandomSubset(letterArray, n) {
+      let availableLetters = [...letterArray];
+      let chosen = [];
+      for (let i = 0; i < n && availableLetters.length > 0; i++) {
+        let roundTotalWeight = 0;
+        availableLetters.forEach(l => {
+          roundTotalWeight += 1 / (1 + (guessCounts[l.si] || 0));
+        });
+        const r = Math.random() * roundTotalWeight;
+        let cumulative = 0;
+        let selectedIndex = -1;
+        for (let j = 0; j < availableLetters.length; j++) {
+          cumulative += 1 / (1 + (guessCounts[availableLetters[j].si] || 0));
+          if (r <= cumulative) {
+            selectedIndex = j;
+            break;
+          }
+        }
+        if (selectedIndex !== -1) {
+          const selectedLetter = availableLetters.splice(selectedIndex, 1)[0];
+          chosen.push(selectedLetter);
+        }
       }
-      vowelsLearnedCount.textContent = learnedVowels.size;
-      consonantsLearnedCount.textContent = learnedConsonants.size;
-      // Update "All" counter
-      allLearnedCount.textContent = learnedVowels.size + learnedConsonants.size;
+      return chosen;
     }
 
-    // Function to Shuffle an Array (Fisher-Yates Algorithm)
+    /* ===================== UTILS ===================== */
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random()*(i+1));
@@ -1245,7 +1357,38 @@
       return array;
     }
 
-    // Function to Save Progress to localStorage
+    // Update numeric fields based on difficulty selection
+    function applyDifficultySettings() {
+      const difficulty = difficultySelect.value;
+      if (difficulty === 'easy') {
+        initialActiveSizeInput.value = 3;
+        wellLearnedThresholdInput.value = 3;
+        phaseUpThresholdInput.value = 0.7;
+        phaseAddCountInput.value = 2;
+        roundSizeInput.value = 3;
+      } else if (difficulty === 'medium') {
+        initialActiveSizeInput.value = 5;
+        wellLearnedThresholdInput.value = 5;
+        phaseUpThresholdInput.value = 0.75;
+        phaseAddCountInput.value = 5;
+        roundSizeInput.value = 5;
+      } else if (difficulty === 'hard') {
+        initialActiveSizeInput.value = 7;
+        wellLearnedThresholdInput.value = 7;
+        phaseUpThresholdInput.value = 0.8;
+        phaseAddCountInput.value = 7;
+        roundSizeInput.value = 7;
+      }
+    }
+
+    function setUserParameters() {
+      if (initialActiveSizeInput.value) initialActiveSize = parseInt(initialActiveSizeInput.value);
+      if (wellLearnedThresholdInput.value) WELL_LEARNED_THRESHOLD = parseInt(wellLearnedThresholdInput.value);
+      if (phaseUpThresholdInput.value) PHASE_UP_THRESHOLD = parseFloat(phaseUpThresholdInput.value);
+      if (phaseAddCountInput.value) PHASE_ADD_COUNT = parseInt(phaseAddCountInput.value);
+      if (roundSizeInput.value) ROUND_SIZE = parseInt(roundSizeInput.value);
+    }
+
     function saveProgress() {
       const data = {
         attempts,
@@ -1261,12 +1404,12 @@
         WELL_LEARNED_THRESHOLD,
         PHASE_UP_THRESHOLD,
         PHASE_ADD_COUNT,
-        ROUND_SIZE
+        ROUND_SIZE,
+        difficulty: difficultySelect.value
       };
       localStorage.setItem('sinhalaprogress', JSON.stringify(data));
     }
 
-    // Function to Load Progress from localStorage
     function loadProgress() {
       const dataStr = localStorage.getItem('sinhalaprogress');
       if (!dataStr) return false;
@@ -1282,9 +1425,9 @@
       else if (setType === 'consonants') currentSet = consonants;
       else currentSet = vowels.concat(consonants);
 
-      allLetters = data.allLetters.map(l => findLetterObject(l)) || [];
-      activeSet = data.activeSet.map(l => findLetterObject(l)) || [];
-      remainingLetters = data.remainingLetters.map(l => findLetterObject(l)) || [];
+      allLetters = data.allLetters?.map(l => findLetterObject(l)) || [];
+      activeSet = data.activeSet?.map(l => findLetterObject(l)) || [];
+      remainingLetters = data.remainingLetters?.map(l => findLetterObject(l)) || [];
 
       initialActiveSize = data.initialActiveSize || initialActiveSize;
       WELL_LEARNED_THRESHOLD = data.WELL_LEARNED_THRESHOLD || WELL_LEARNED_THRESHOLD;
@@ -1292,26 +1435,43 @@
       PHASE_ADD_COUNT = data.PHASE_ADD_COUNT || PHASE_ADD_COUNT;
       ROUND_SIZE = data.ROUND_SIZE || ROUND_SIZE;
 
+      // Restore difficulty
+      if (data.difficulty) {
+        difficultySelect.value = data.difficulty;
+      }
+
       updateParameterInputs();
       updateStats();
+      updateProgressBars();
       return true;
     }
 
-    // Function to Find Letter Object from en and si
-    function findLetterObject({en, si}) {
-      const all = vowels.concat(consonants);
-      return all.find(x => x.en === en && x.si === si) || {en, si};
-    }
-
-    // Function to Determine Current Set Type
     function getCurrentSetType() {
-      if (currentSet.length === vowels.length && currentSet.every(l => vowels.some(v => v.si === l.si))) return 'vowels';
-      if (currentSet.length === consonants.length && currentSet.every(l => consonants.some(c => c.si === l.si))) return 'consonants';
-      if (currentSet.length === vowels.length + consonants.length) return 'all';
+      if (
+        currentSet.length === vowels.length && 
+        currentSet.every(l => vowels.some(v => v.si === l.si))
+      ) return 'vowels';
+      if (
+        currentSet.length === consonants.length && 
+        currentSet.every(l => consonants.some(c => c.si === l.si))
+      ) return 'consonants';
+      if (
+        currentSet.length === vowels.length + consonants.length
+      ) return 'all';
       return 'all';
     }
 
-    // Function to Update Parameter Input Fields with Current Values
+    function findLetterObject({en, si}) {
+      const all = vowels.concat(consonants);
+      // Attempt to find by si if no en
+      if (si) {
+        const bySi = all.find(x => x.si === si);
+        if (bySi) return bySi;
+      }
+      // Otherwise match both
+      return all.find(x => x.en === en && x.si === si) || {en, si};
+    }
+
     function updateParameterInputs() {
       initialActiveSizeInput.value = initialActiveSize;
       wellLearnedThresholdInput.value = WELL_LEARNED_THRESHOLD;
@@ -1320,18 +1480,71 @@
       roundSizeInput.value = ROUND_SIZE;
     }
 
-    // Function to Populate Answer List in Modal
+    function updateStats() {
+      if (progressCount) {
+        progressCount.textContent = `${matches}/${attempts}`;
+      }
+      vowelsLearnedCount.textContent = learnedVowels.size;
+      consonantsLearnedCount.textContent = learnedConsonants.size;
+      document.getElementById('allLearnedCount').textContent = learnedVowels.size + learnedConsonants.size;
+    }
+
+    function updateProgressBars() {
+      const vowelCount = vowels.length;
+      const consonantCount = consonants.length;
+      const totalCount = vowelCount + consonantCount;
+
+      // Vowels
+      const vowelLearnedPercent = (learnedVowels.size / vowelCount) * 100;
+      vowelProgressFill.style.width = vowelLearnedPercent + '%';
+      vowelProgressText.textContent = Math.round(vowelLearnedPercent) + '%';
+
+      // Consonants
+      const consonantLearnedPercent = (learnedConsonants.size / consonantCount) * 100;
+      consonantProgressFill.style.width = consonantLearnedPercent + '%';
+      consonantProgressText.textContent = Math.round(consonantLearnedPercent) + '%';
+
+      // Total
+      const totalLearned = learnedVowels.size + learnedConsonants.size;
+      const totalLearnedPercent = (totalLearned / totalCount) * 100;
+      totalProgressFill.style.width = totalLearnedPercent + '%';
+      totalProgressText.textContent = Math.round(totalLearnedPercent) + '%';
+    }
+
+    function displayVersion() {
+      const version = "v0.2.0";
+      if (versionDisplay) {
+        versionDisplay.textContent = version;
+      }
+      const githubRepo = "clstacy/sinhala";
+      fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.tag_name) {
+            versionDisplay.textContent = data.tag_name;
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching version from GitHub:", error);
+        });
+    }
+
+    /* ===================== CHEAT SHEET / HELP MODAL ===================== */
+    function openCheatSheetModal() {
+      modalTitle.textContent = "Cheat Sheet";
+      modalMessage.style.display = "block";
+      cheatSheetContent.style.display = "block";
+      helpContent.style.display = "none";
+      modalOverlay.classList.add('active');
+      populateAnswerList('all');
+    }
+
     function populateAnswerList(filter = 'all') {
       answerList.innerHTML = '';
       let lettersToDisplay = [];
-
-      if (filter === 'vowels') {
-        lettersToDisplay = vowels;
-      } else if (filter === 'consonants') {
-        lettersToDisplay = consonants;
-      } else {
-        lettersToDisplay = vowels.concat(consonants);
-      }
+      if (filter === 'vowels') lettersToDisplay = vowels;
+      else if (filter === 'consonants') lettersToDisplay = consonants;
+      else lettersToDisplay = vowels.concat(consonants);
 
       lettersToDisplay.forEach(l => {
         const div = document.createElement('div');
@@ -1347,53 +1560,72 @@
       });
     }
 
-    // Function to Display Current Version
-    function displayVersion() {
-      const version = "v0.2.0";
-      if (versionDisplay) {
-        versionDisplay.textContent = version;
+    /* ===================== QUIZ / REVIEW MODE ===================== */
+    function startQuiz() {
+      // Gather letters that are at least encountered (in learned sets)
+      quizPool = Array.from(learnedVowels).concat(Array.from(learnedConsonants));
+      if (quizPool.length === 0) {
+        alert("You haven't learned any letters yet! Match some letters first.");
+        return;
       }
-      
-      // Optional: Dynamically fetch from GitHub (uncomment if needed)
-      const githubRepo = "clstacy/sinhala"; // Corrected repository name
-      fetch(`https://api.github.com/repos/${githubRepo}/releases/latest`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.tag_name) {
-            versionDisplay.textContent = data.tag_name;
+      shuffle(quizPool);
+      quizIndex = 0;
+      quizOverlay.classList.add('active');
+      loadNextQuizQuestion();
+    }
+
+    function loadNextQuizQuestion() {
+      quizResult.textContent = "";
+      quizOptions.innerHTML = "";
+
+      if (quizIndex >= quizPool.length) {
+        quizQuestion.textContent = "Review complete!";
+        nextQuestionBtn.textContent = "Close";
+        nextQuestionBtn.onclick = () => {
+          quizOverlay.classList.remove('active');
+          nextQuestionBtn.onclick = loadNextQuizQuestion;
+          nextQuestionBtn.textContent = "Next";
+        };
+        return;
+      }
+
+      // currentLetterSi is the Sinhala letter from quizPool
+      const currentLetterSi = quizPool[quizIndex];
+      quizQuestion.textContent = `Which transliteration matches "${currentLetterSi}"?`;
+
+      // Find the letter object by si to get its .en
+      const letterObj = findLetterObject({si: currentLetterSi});
+      let correctEn = letterObj.en || "UNKNOWN";
+
+      // Collect random options
+      let possibleAnswers = [];
+      // push the correct one
+      possibleAnswers.push(correctEn);
+
+      // Add 3 random distractors from the entire set
+      const allEnglish = vowels.concat(consonants).map(item => item.en).filter(en => en !== correctEn);
+      shuffle(allEnglish);
+      possibleAnswers.push(...allEnglish.slice(0, 3));
+      shuffle(possibleAnswers);
+
+      possibleAnswers.forEach(ans => {
+        const btn = document.createElement('button');
+        btn.className = 'banner-btn';
+        btn.textContent = ans;
+        btn.addEventListener('click', () => {
+          if (ans === correctEn) {
+            quizResult.textContent = "Correct!";
+            quizResult.style.color = "green";
+          } else {
+            quizResult.textContent = `Wrong! The correct answer is "${correctEn}".`;
+            quizResult.style.color = "red";
           }
-        })
-        .catch(error => {
-          console.error("Error fetching version from GitHub:", error);
         });
-      
-    }
+        quizOptions.appendChild(btn);
+      });
 
-    // Function to Hide Intro Message
-    function hideIntroMessage() {
-      if (introMessage) {
-        introMessage.style.display = 'none';
-        document.getElementById('game-area').style.display = 'flex';
-      }
-    }
-
-    // Function to Set Active Badge
-    function setActiveBadge(setType) {
-      // Remove active class from all badges
-      vowelsBadge.classList.remove('active');
-      consonantsBadge.classList.remove('active');
-      allBadge.classList.remove('active');
-
-      // Add active class to the selected badge
-      if (setType === 'vowels') {
-        vowelsBadge.classList.add('active');
-      } else if (setType === 'consonants') {
-        consonantsBadge.classList.add('active');
-      } else {
-        allBadge.classList.add('active');
-      }
+      quizIndex++;
     }
   </script>
-
 </body>
 </html>
